@@ -2,7 +2,11 @@
 import Link from "next/link";
 import { ShoppingCart, LogIn } from "lucide-react";
 
+import { useCart } from "@/context/CartContext";
+
 export default function Navbar() {
+
+   const { cartCount } = useCart();
   return (
     <nav className="bg-black/80 fixed w-full z-50 top-0 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -23,9 +27,13 @@ export default function Navbar() {
         {/* Icons */}
         <div className="flex items-center gap-6">
           <Link href="/cart" className="relative">
-            <ShoppingCart className="w-6 h-6 hover:text-gold" />
-            <span className="absolute -top-2 -right-2 bg-gold text-black text-xs rounded-full px-1">0</span>
-          </Link>
+        <i className="ri-shopping-cart-2-line text-2xl"></i>
+        {cartCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-amber-400 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+            {cartCount}
+          </span>
+        )}
+      </Link>
           <Link href="/login">
             <LogIn className="w-6 h-6 hover:text-gold" />
           </Link>

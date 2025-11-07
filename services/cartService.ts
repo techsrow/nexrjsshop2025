@@ -1,87 +1,119 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/Cart`;
 
-function isAuthenticated() {
-  return !!localStorage.getItem("token");
-}
-
-const cartService = {
+export const cartService = {
   async getCart() {
-    if (isAuthenticated()) {
-      const res = await fetch(API_URL, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      return await res.json();
-    } else {
-      return JSON.parse(localStorage.getItem("cart") || "[]");
+    const token = localStorage.getItem("token");
+    const res = await fetch(API_URL, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      console.error("❌ Failed GET CART:", data);
+      throw new Error(data?.message || `Failed to fetch cart: ${res.status}`);
     }
+    return data; // ⬅ returns { success, data: { items, summary } }
   },
 
-  async addToCart(productId: number, quantity: number = 1) {
-    if (isAuthenticated()) {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ productId, quantity }),
-      });
-      return await res.json();
-    } else {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existing = cart.find((item: any) => item.productId === productId);
-      if (existing) existing.quantity += quantity;
-      else cart.push({ productId, quantity });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      return cart;
+  async addToCart(productId: number, quantity = 1) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    body: JSON.stringify({ productId, quantity }),
+  });
+
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    console.error("❌ AddToCart Error Backend:", data);
+    throw new Error(data?.message || `Failed to add to cart: ${res.status}`);
+  }
+
+  return data;
+},
+
+
+  async updateQuantity(productId: number, quantity: number) {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_URL}/${productId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify({ quantity }),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      console.error("❌ Update failed:", data);
+      throw new Error(data?.message || `Failed to update quantity`);
     }
+
+    return data;
   },
 
-  async removeFromCart(productId: number) {
-    if (isAuthenticated()) {
-      const res = await fetch(`${API_URL}/${productId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      return await res.json();
-    } else {
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      cart = cart.filter((item: any) => item.productId !== productId);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      return cart;
+  async removeItem(productId: number) {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_URL}/${productId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      console.error("❌ Remove item error:", data);
+      throw new Error(data?.message || `Failed to remove item`);
     }
+
+    return data;
+  },
+
+  async getCount() {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_URL}/count`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) throw new Error(`Failed to get count`);
+
+    return data; // ✅ returns { success, data: { totalItems } }
   },
 
   async clearCart() {
-    if (isAuthenticated()) {
-      await fetch(`${API_URL}/clear`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-    } else {
-      localStorage.removeItem("cart");
-    }
-  },
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_URL}/clear`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
 
-  async mergeGuestCart() {
-    const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    if (localCart.length > 0 && isAuthenticated()) {
-      const res = await fetch(`${API_URL}/merge-guest`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(localCart),
-      });
+    const data = await res.json().catch(() => null);
 
-      if (res.ok) {
-        localStorage.removeItem("cart");
-      }
-      return await res.json();
+    if (!res.ok) {
+      console.error("❌ Clear Cart Backend:", data);
+      throw new Error(data?.message || "Failed to clear cart");
     }
-  },
+
+    return data;
+  }
 };
-
-export default cartService;

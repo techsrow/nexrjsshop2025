@@ -10,10 +10,11 @@ export default function Navbar() {
   const { username, logout } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
-  };
+ const handleLogout = () => {
+  logout();
+  router.push("/login");
+};
+
 
   return (
     <nav className="bg-black/80 fixed w-full z-50 top-0 border-b border-gray-800">
@@ -42,24 +43,15 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* ✅ If logged in, show username + logout */}
           {username ? (
-            <div className="flex items-center gap-4">
-              <span className="text-amber-400 font-semibold">
-                Hello, {username}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="text-red-400 hover:text-red-300"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Link href="/login">
-              <span className="hover:text-gold">Login</span>
-            </Link>
-          )}
+  <div>
+    Hello, {username}
+    <button onClick={handleLogout}>Logout</button>
+  </div>
+) : (
+  <Link href="/login">Login</Link>
+)}
+
 
         </div>
       </div>

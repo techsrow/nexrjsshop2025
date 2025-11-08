@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
@@ -13,6 +14,7 @@ interface CartContextType {
   updateQuantity: (productId: number, quantity: number) => Promise<void>;
   removeItem: (productId: number) => Promise<void>;
   clearCart: () => Promise<void>;
+  refreshCartCount: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -22,13 +24,26 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     loadCartCount();
+  //     loadCartItems();
+  //   }
+  // }, []);
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      loadCartCount();
-      loadCartItems();
+  const loadCartCount = async () => {
+    try {
+      const res = await cartService.getCount();
+      setCartCount(res.data.totalItems || 0);
+    } catch {
+      setCartCount(0); // ✅ no console error
     }
-  }, []);
+  };
+
+  loadCartCount();
+}, []);
+
 
   const loadCartCount = async () => {
     try {
@@ -100,6 +115,10 @@ const loadCartItems = async () => {
     }
   };
 
+const refreshCartCount = async () => {
+  await loadCartCount();
+};
+
   return (
     <CartContext.Provider
       value={{
@@ -111,6 +130,7 @@ const loadCartItems = async () => {
         updateQuantity,
         removeItem,
         clearCart,
+       refreshCartCount
       }}
     >
       {children}

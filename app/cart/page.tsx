@@ -1,9 +1,14 @@
 "use client";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function CartPage() {
-  const { cartItems, removeItem, updateQuantity, clearCart } = useCart();
+  const { cartItems, removeItem, updateQuantity, clearCart,loadCartItems  } = useCart();
+
+  useEffect(() => {
+    loadCartItems();
+  }, []);
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + (item.price || 0) * item.quantity,

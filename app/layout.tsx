@@ -3,12 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { CartProvider } from "@/context/CartContext";
 import { Toaster } from "react-hot-toast";
-
-
-export const metadata = {
-  title: "Mystic Smoke",
-  description: "Experience the Art of Smoke",
-};
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,15 +15,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-black text-white">
-       
-        <CartProvider>
- <Navbar />
-             {children}
-               <Toaster />
-        </CartProvider>
-     
-        <Footer />
-       
+        <AuthProvider>
+          <CartProvider>
+            <Navbar /> {/* ✅ Moved inside AuthProvider */}
+            {children}
+            <Toaster />
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

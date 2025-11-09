@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
-import React, { useEffect, useState } from "react";
-import { productService } from "@/services/productService"; // adjust path if needed
-import "remixicon/fonts/remixicon.css";
+import { useEffect, useState } from "react";
+import { productService } from "@/services/productService";
+import { useCart } from "@/context/CartContext";
+import Link from "next/link";
+import { cartService } from "@/services/cartService";
+import toast from "react-hot-toast";
 
 
 const FeaturedProducts = () => {
@@ -37,16 +39,24 @@ const FeaturedProducts = () => {
         {products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {products.map((product: any) => (
+
               <div
                 key={product.id}
                 className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-amber-400/50 transition-all duration-300 group cursor-pointer"
               >
+
+                 
                 <div className="relative overflow-hidden">
-                  <img
+
+                   <Link href={`/products/${product.id}`}>
+                   <img
                     src={product.image || "/placeholder.png"}
                     alt={product.name}
                     className="w-full h-64 object-cover object-top group-hover:scale-110 transition-transform duration-500"
                   />
+                  
+                  </Link>
+                 
 
                   {/* Overlay Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -67,7 +77,10 @@ const FeaturedProducts = () => {
                     </span>
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-amber-400 transition-colors">
-                    {product.name}
+                      <Link href={`/products/${product.id}`}>
+  {product.name}
+                      </Link>
+                  
                   </h3>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-amber-400">

@@ -178,7 +178,7 @@ export default function CheckoutPage() {
             <h2 className="text-xl font-bold text-white mb-4">Order Summary</h2>
 
             {cartItems.map((item) => (
-              <div key={item.productId ?? item.id} className="flex items-center gap-3 mb-4">
+              <div key={item.productId ?? item.productId} className="flex items-center gap-3 mb-4">
                 <img
                   src={item.imageUrl || "/placeholder.png"}
                   className="w-16 h-16 rounded-lg object-cover"

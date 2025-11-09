@@ -255,8 +255,24 @@ export default function ProductDetails() {
   const total = (product.price * quantity).toFixed(2);
 
   return (
+
+    
+   
     <section className="py-16 bg-gray-900">
+      <div className="bg-gray-900 py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav className="flex items-center space-x-2 text-sm">
+          <button className="text-gray-400 hover:text-amber-400 cursor-pointer">Home</button>
+          <i className="ri-arrow-right-s-line text-gray-500"></i>
+
+          <button className="text-gray-400 hover:text-amber-400 cursor-pointer">Shop</button>
+          <i className="ri-arrow-right-s-line text-gray-500"></i>
+
+          <span className="text-amber-400">{product.name}</span>
+        </nav>
+      </div>
+    </div>
+      <div className="max-w-7xl py-16 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
           {/* LEFT - Image */}
@@ -276,6 +292,45 @@ export default function ProductDetails() {
           <div className="space-y-6">
             <h1 className="text-4xl font-bold text-white">{product.name}</h1>
             <p className="text-amber-400 text-3xl font-bold">₹{product.price.toFixed(2)}</p>
+
+ <p className="text-gray-300 text-lg leading-relaxed">
+             {product.description}
+            </p>
+            <div>
+  <h3 className="text-lg font-semibold text-white mb-3">Flavours : </h3>
+
+  <div className="flex gap-3">
+   
+    <button className="px-4 py-2 rounded-lg border transition-colors cursor-pointer whitespace-nowrap 
+             border-amber-400 bg-amber-400/10 text-amber-400">
+      
+     Double Apple
+    </button>
+
+    <button
+      className="px-4 py-2 rounded-lg border transition-colors cursor-pointer whitespace-nowrap 
+             border-gray-600 text-gray-300 hover:border-gray-500">
+      Mint
+    </button>
+
+  
+    <button
+      className="px-4 py-2 rounded-lg border transition-colors cursor-pointer whitespace-nowrap 
+             border-gray-600 text-gray-300 hover:border-gray-500">
+     Grape
+    </button>
+     <button
+      className="px-4 py-2 rounded-lg border transition-colors cursor-pointer whitespace-nowrap 
+             border-gray-600 text-gray-300 hover:border-gray-500">
+     Vanilla
+    </button>
+    <button
+      className="px-4 py-2 rounded-lg border transition-colors cursor-pointer whitespace-nowrap 
+             border-gray-600 text-gray-300 hover:border-gray-500">
+     Peach
+    </button>
+  </div>
+</div>
 
             {/* Quantity */}
             <div>
@@ -319,3 +374,6 @@ export default function ProductDetails() {
     </section>
   );
 }
+
+
+

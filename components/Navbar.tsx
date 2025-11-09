@@ -21,7 +21,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         
         <Link href="/" className="text-2xl font-bold text-gold">
-          🔥 Mystic Smoke
+          <img src="/logo.png" className="logo-width"></img>
         </Link>
 
         <div className="hidden md:flex space-x-8 text-white text-sm font-medium">
@@ -37,7 +37,7 @@ export default function Navbar() {
           <Link href="/cart" className="relative">
             <i className="ri-shopping-cart-2-line text-2xl"></i>
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-amber-400 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-gold-400 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {cartCount}
               </span>
             )}

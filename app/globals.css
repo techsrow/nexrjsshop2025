@@ -39,3 +39,14 @@ a {
 .hero-overlay {
   background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,1) 100%);
 }
+
+.logo-width{
+  max-width: 120px;
+}
+
+.bg-gold-400{
+  background-color: #dc9314;
+}
+.gold-text-color{
+  color: #93620d;
+}

@@ -16,7 +16,7 @@ const Footer = () => {
                 className="text-2xl font-bold"
                 style={{ fontFamily: "Pacifico, serif" }}
               >
-                Mystic Smoke
+                <img src="/logo.png" className="logo-width"></img>
               </span>
             </div>
 
@@ -97,15 +97,15 @@ const Footer = () => {
             <div className="space-y-2 text-gray-400">
               <p className="flex items-center">
                 <i className="ri-map-pin-line mr-2 text-amber-400"></i>
-                123 Smoke Street, City, State 12345
+                Jogeshwari, Mumbai
               </p>
               <p className="flex items-center">
                 <i className="ri-phone-line mr-2 text-amber-400"></i>
-                (555) 123-4567
+                +91-77382 58525
               </p>
               <p className="flex items-center">
                 <i className="ri-mail-line mr-2 text-amber-400"></i>
-                info@mysticsmoke.com
+                info@alsaifsheesha.online
               </p>
             </div>
           </div>

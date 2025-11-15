@@ -1,4 +1,4 @@
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/public/PublicProducts`;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/PublicProducts`;
 
 export const productService = {
   async getAll() {

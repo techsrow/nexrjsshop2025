@@ -48,15 +48,14 @@ const FeaturedProducts = () => {
                  
                 <div className="relative overflow-hidden">
 
-                   <Link href={`/products/${product.id}`}>
-                   <img
-                    src={product.image || "/placeholder.png"}
-                    alt={product.name}
-                    className="w-full h-64 object-cover object-top group-hover:scale-110 transition-transform duration-500"
-                  />
-                  
-                  </Link>
-                 
+                   <Link href={`/products/${product.id}`} className="block">
+  <img
+    src={product.imageUrl || "/placeholder.png"}
+    alt={product.name}
+    className="w-full h-64 object-cover object-top group-hover:scale-110 transition-transform duration-500 cursor-pointer relative z-20"
+  />
+</Link>
+
 
                   {/* Overlay Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -91,7 +90,11 @@ const FeaturedProducts = () => {
                       className="font-semibold bg-gradient-to-r from-amber-400 to-yellow-500 text-black hover:from-amber-500 hover:to-yellow-600 shadow-lg hover:shadow-xl px-4 py-2 text-sm rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer"
                     >
                       <i className="ri-shopping-cart-line mr-1"></i>
-                      Add to Cart
+
+                      <Link href={`/products/${product.id}`}>
+  Buy Now
+                      </Link>
+                     
                     </button>
                   </div>
                 </div>

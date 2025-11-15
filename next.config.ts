@@ -4,7 +4,10 @@ const nextConfig = {
     domains: [
       "api.alsaifsheesha.online",
       "alsaifsheesha.online",
-      "res.cloudinary.com"
+      "res.cloudinary.com",
+      "localhost",
+      "yourcdn.com",
+      "https://yourcdn.com"
     ],
   },
 };

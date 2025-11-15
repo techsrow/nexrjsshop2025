@@ -11,11 +11,14 @@ export default function SignupPage() {
 
   const onSubmit = async (data: any) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/Auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       const response = await res.json();
 
@@ -24,22 +27,25 @@ export default function SignupPage() {
         return;
       }
 
-      // ✅ Save token & username
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("username", response.data.userName);
+      // ✅ Show success toast
+      toast.success("🎉 User registered successfully!");
 
-      toast.success("✅ Account created successfully!");
+      // ❗ Do NOT auto-login — go to login page instead
+      setTimeout(() => {
+        router.push("/login");
+      }, 800);
 
-      router.push("/");
     } catch (e) {
-      toast.error("Signup error");
+      toast.error("Signup error occurred");
     }
   };
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
       <div className="bg-gray-800 p-8 rounded-xl w-full max-w-md border border-gray-700">
-        <h1 className="text-2xl font-bold text-amber-400 mb-4 text-center">Sign Up</h1>
+        <h1 className="text-2xl font-bold text-amber-400 mb-4 text-center">
+          Sign Up
+        </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <input

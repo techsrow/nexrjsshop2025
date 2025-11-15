@@ -15,13 +15,13 @@ export default function CartPage() {
     0
   );
 
-  const tax = subtotal * 0.08;
+  const tax = 0;
   const total = subtotal + tax;
 
   return (
     <section className="py-16 bg-gray-900 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-white mb-8">Shopping Cart</h1>
+      <div className="max-w-7xl mx-auto px-4 ">
+        <h5 className="text-1xl font-bold text-white mb-8 cart-pad">Shopping Cart</h5>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">

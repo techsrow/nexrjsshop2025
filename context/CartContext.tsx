@@ -1,123 +1,240 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { cartService } from "@/services/cartService";
-import type { CartItem } from "@/types/cart";
 
-interface CartContextType {
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { cartService } from "@/services/cartService";
+import { useAuth } from "@/context/AuthContext";
+import { promises } from "dns";
+
+type CartItem = {
+  productId: number;
+  name: string;
+  price: number;
+  imageUrl?: string;
+  quantity: number;
+};
+
+type CartContextType = {
   cartCount: number;
   cartItems: CartItem[];
   loading: boolean;
-  loadCartItems: () => Promise<void>;
-  addToCart: (productId: number, quantity?: number) => Promise<void>;
+  addToCart: (productId: number, quantity?: number, productData?: Partial<CartItem>) => Promise<void>;
   updateQuantity: (productId: number, quantity: number) => Promise<void>;
   removeItem: (productId: number) => Promise<void>;
   clearCart: () => Promise<void>;
-  refreshCartCount: () => Promise<void>;
-}
+  loadCartItems: () => Promise<void>;
+   refreshCartCount: () => Promise<void>;
+};
+
+const LS_KEY = "guestCart";
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartCount, setCartCount] = useState<number>(0);
+  const { token } = useAuth(); // must be client-only hook
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartCount, setCartCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     loadCartCount();
-  //     loadCartItems();
-  //   }
-  // }, []);
-  useEffect(() => {
-  const loadCartCount = async () => {
+  // ------- localStorage helpers -------
+  const readGuest = (): CartItem[] => {
     try {
-      const res = await cartService.getCount();
-      setCartCount(res.data.totalItems || 0);
+      if (typeof window === "undefined") return [];
+      return JSON.parse(localStorage.getItem(LS_KEY) || "[]");
     } catch {
-      setCartCount(0); // ✅ no console error
+      return [];
     }
   };
+  const writeGuest = (items: CartItem[]) => {
+    localStorage.setItem(LS_KEY, JSON.stringify(items));
+    // notify other listeners in this tab
+    window.dispatchEvent(new CustomEvent("guestCartUpdated"));
+  };
 
-  loadCartCount();
-}, []);
+  // ------- sync helpers -------
+  const syncStateFromGuest = () => {
+    const guest = readGuest();
+    setCartItems(guest);
+    setCartCount(guest.reduce((s, it) => s + it.quantity, 0));
+  };
 
-
-  const loadCartCount = async () => {
+  const syncStateFromServer = async () => {
     try {
-      const res = await cartService.getCount();
-      setCartCount(res.data?.totalItems || 0);
+      setLoading(true);
+      const res = await cartService.getCart();
+      const items =
+        res.data?.items?.map((ci: any) => ({
+          productId: ci.productId,
+          name: ci.productName,
+          price: ci.productPrice,
+          imageUrl: ci.productImageUrl,
+          quantity: ci.quantity,
+        })) || [];
+      setCartItems(items);
+      setCartCount(items.reduce((s, it) => s + it.quantity, 0));
     } catch (err) {
-      console.error("Cart count load failed:", err);
+      // fallback to guest if server fails
+      syncStateFromGuest();
+    } finally {
+      setLoading(false);
     }
   };
 
-const loadCartItems = async () => {
+  // ------- public API -------
+  const loadCartItems = async () => {
+    if (!token) {
+      syncStateFromGuest();
+    } else {
+      await syncStateFromServer();
+    }
+  };
+
+  const addToCart = async (productId: number, quantity = 1, productData?: any) => {
   try {
-    setLoading(true);
-    const res = await cartService.getCart();
+    const token = localStorage.getItem("token");
 
-    const items = res.data?.items?.map((ci: any) => ({
-      productId: ci.productId,
-      name: ci.productName,
-      description: ci.productDescription,
-      price: ci.productDiscountPrice ?? ci.productPrice,
-      imageUrl: ci.productImageUrl,
-      quantity: ci.quantity
-    })) || [];
+    if (token) {
+      // Logged-in → Send to API cart
+      await cartService.addToCart(productId, quantity);
+      await loadCartItems();
+      await loadCartCount();
+    } else {
+      // Guest → Save FULL DETAILS to localStorage
+      const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
 
-    setCartItems(items);
-  } finally {
-    setLoading(false);
+      const existing = guestCart.find((item: any) => item.productId === productId);
+
+      if (existing) {
+        existing.quantity += quantity;
+      } else {
+        guestCart.push({
+          productId,
+          quantity,
+          ...productData, // name, price, imageUrl stored!
+        });
+      }
+
+      localStorage.setItem("guestCart", JSON.stringify(guestCart));
+      setCartItems(guestCart);
+      setCartCount(guestCart.reduce((sum: number, i: any) => sum + i.quantity, 0));
+    }
+  } catch (err) {
+    console.error("Add to cart failed:", err);
   }
 };
 
+  // const addToCart = async (productId: number, quantity = 1, productData?: Partial<CartItem>) => {
+  //   if (!token) {
+  //     // guest flow
+  //     const guest = readGuest();
+  //     const found = guest.find((g) => g.productId === productId);
+  //     if (found) {
+  //       found.quantity += quantity;
+  //     } else {
+  //       guest.push({
+  //         productId,
+  //         name: productData?.name || "",
+  //         price: productData?.price ?? 0,
+  //         imageUrl: productData?.imageUrl,
+  //         quantity,
+  //       });
+  //     }
+  //     writeGuest(guest);
+  //     syncStateFromGuest();
+  //     return;
+  //   }
 
-  const addToCart = async (productId: number, quantity = 1) => {
-    try {
-      await cartService.addToCart(productId, quantity);
-      await loadCartItems();    // ✅ add this
-    await loadCartCount();
-    } catch (err) {
-      console.error("Add to cart failed:", err);
-    }
-  };
+  //   // logged-in flow - call backend
+  //   await cartService.addToCart(productId, quantity);
+  //   await syncStateFromServer();
+  // };
 
   const updateQuantity = async (productId: number, quantity: number) => {
-    try {
-      await cartService.updateQuantity(productId, quantity);
-      await loadCartItems();
-      await loadCartCount();
-    } catch (err) {
-      console.error("Update quantity failed:", err);
+    if (!token) {
+      const guest = readGuest();
+      const it = guest.find((g) => g.productId === productId);
+      if (it) it.quantity = quantity;
+      writeGuest(guest);
+      syncStateFromGuest();
+      return;
     }
+
+    await cartService.updateQuantity(productId, quantity);
+    await syncStateFromServer();
   };
 
   const removeItem = async (productId: number) => {
-    try {
-      await cartService.removeItem(productId);
-      await loadCartItems();
-      await loadCartCount();
-    } catch (err) {
-      console.error("Remove item failed:", err);
+    if (!token) {
+      const guest = readGuest().filter((g) => g.productId !== productId);
+      writeGuest(guest);
+      syncStateFromGuest();
+      return;
     }
+
+    await cartService.removeItem(productId);
+    await syncStateFromServer();
   };
 
   const clearCart = async () => {
-    try {
-      await cartService.clearCart();
-      setCartItems([]);
-      setCartCount(0);
-    } catch (err) {
-      console.error("Clear Cart Failed:", err);
+    if (!token) {
+      writeGuest([]);
+      syncStateFromGuest();
+      return;
     }
+
+    await cartService.clearCart();
+    await syncStateFromServer();
   };
 
-const refreshCartCount = async () => {
-  await loadCartCount();
-};
+  // ------- merge guest cart on login -------
+  useEffect(() => {
+    const mergeGuest = async () => {
+      if (!token) return;
+      const guest = readGuest();
+      if (!guest.length) {
+        await syncStateFromServer();
+        return;
+      }
+
+      // merge items one-by-one, backend should upsert as you have implemented
+      for (const it of guest) {
+        try {
+          await cartService.addToCart(it.productId, it.quantity);
+        } catch (err) {
+          console.warn("Merge item failed", err);
+        }
+      }
+      // remove guest cart and reload from server
+      localStorage.removeItem(LS_KEY);
+      await syncStateFromServer();
+    };
+
+    mergeGuest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  // ------- storage event listener (other tabs) & internal custom event -------
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === LS_KEY) {
+        syncStateFromGuest();
+      }
+    };
+    const onCustom = () => syncStateFromGuest();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("guestCartUpdated", onCustom as EventListener);
+
+    // initial load
+    loadCartItems();
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("guestCartUpdated", onCustom as EventListener);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <CartContext.Provider
@@ -125,12 +242,11 @@ const refreshCartCount = async () => {
         cartCount,
         cartItems,
         loading,
-        loadCartItems,
         addToCart,
         updateQuantity,
         removeItem,
         clearCart,
-       refreshCartCount
+        loadCartItems,
       }}
     >
       {children}

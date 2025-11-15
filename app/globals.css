@@ -50,3 +50,25 @@ a {
 .gold-text-color{
   color: #93620d;
 }
+
+/* Hide Scrollbar but keep scroll working */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+
+.product-nav{
+  margin-top: 90px;
+}
+
+.product-nav-details{
+  margin-top: 40px;
+}
+
+.cart-pad{
+  margin-top: 80px;
+}

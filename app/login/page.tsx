@@ -1,40 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login, isLoggedIn } = useAuth();
+  const { refreshCartCount } = useCart();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUsername } = useAuth();
-  const { refreshCartCount } = useCart();
-  const router = useRouter();
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
+
+
+ useEffect(() => {
+  if (isLoggedIn && !justLoggedIn) {
+    toast.error("You are already logged in!");
+    router.replace("/");
+  }
+}, [isLoggedIn, justLoggedIn]);
+
 
   const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await api.post("/auth/login", { email, password }, false);
+  try {
+    const res = await api.post("/auth/login", { email, password });
 
-      // ✅ Your backend returns: { success, data: { token, email }, message }
-      const token = res.data.data.token;
-      const userEmail = res.data.data.email;
+    const token = res.data.data.token;
+    const userEmail = res.data.data.user.email;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("username", userEmail);
+    login(userEmail, token);
 
-      setUsername(userEmail);
+    setJustLoggedIn(true);  // ✅ prevents "already logged in" toast right after login
 
+    if (typeof refreshCartCount === "function") {
       await refreshCartCount();
-
-      router.push("/");
-    } catch (err: any) {
-      alert(err.message || "Login failed");
     }
-  };
+
+    toast.success("Login successful!");
+    router.push("/");
+  } catch (err: any) {
+    toast.error(err.response?.data?.message || "Login failed");
+  }
+};
+
 
   return (
     <div className="max-w-md mx-auto mt-24 bg-gray-900 p-6 shadow rounded">

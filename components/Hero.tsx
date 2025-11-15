@@ -18,8 +18,8 @@ export default function Hero() {
           premium products, and an unforgettable atmosphere.
         </p>
         <div className="flex justify-center gap-4">
-          <a href="/shop" className="bg-gold-400 text-white px-6 py-3 rounded-md font-semibold bg-yellow-500 transition">Shop Now</a>
-          <a href="/reservations" className="border border-gold text-gold px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 hover:text-black transition">Reserve a Table</a>
+          <a href="/products" className="bg-gold-400 text-white px-6 py-3 rounded-md font-semibold bg-yellow-500 transition">Rent Now</a>
+          {/* <a href="/reservations" className="border border-gold text-gold px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 hover:text-black transition">Reserve a Table</a> */}
         </div>
       </div>
 

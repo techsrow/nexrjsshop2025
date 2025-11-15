@@ -99,14 +99,7 @@ const Footer = () => {
                 <i className="ri-map-pin-line mr-2 text-amber-400"></i>
                 Jogeshwari, Mumbai
               </p>
-              <p className="flex items-center">
-                <i className="ri-phone-line mr-2 text-amber-400"></i>
-                +91-77382 58525
-              </p>
-              <p className="flex items-center">
-                <i className="ri-mail-line mr-2 text-amber-400"></i>
-                info@alsaifsheesha.online
-              </p>
+              
             </div>
           </div>
         </div>
@@ -114,13 +107,13 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} Mystic Smoke. All rights reserved.
+            © {new Date().getFullYear()} alsaifsheesha. All rights reserved.
           </p>
           <a
             href="https://readdy.ai/?origin=logo"
             className="text-gray-400 hover:text-amber-400 transition-colors text-sm mt-2 md:mt-0"
           >
-            Powered by Readdy
+            
           </a>
         </div>
       </div>

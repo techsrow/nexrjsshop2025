@@ -22,33 +22,48 @@ export default function ProductsPage() {
     })();
   }, []);
 
-const handleAddToCart = async (product: any) => {
+
+ const handleAddToCart = async (product: any) => {
   try {
-    const token = localStorage.getItem("token");
+    await addToCart(product.id, 1, {
+      name: product.name,
+      price: Number(product.price),
+      imageUrl: product.imageUrl,
+    });
 
-    if (token) {
-      await addToCart(product.id, 1);
-      toast.success("✅ Added to cart!");
-      // alert("✅ Added to cart!");
-    } else {
-      // guest cart
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existingItem = existingCart.find((p: any) => p.id === product.id);
-
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        existingCart.push({ ...product, quantity: 1 });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(existingCart));
-
-      alert("✅ Added to cart!");
-    }
+    toast.success("Added to cart!");
   } catch (error) {
-    console.error("❌ Failed to add to cart:", error);
+    console.error("Add to cart failed:", error);
   }
 };
+ 
+// const handleAddToCart = async (product: any) => {
+//   try {
+//     const token = localStorage.getItem("token");
+
+//     if (token) {
+//       await addToCart(product.id, 1);
+//       toast.success("✅ Added to cart!");
+//       // alert("✅ Added to cart!");
+//     } else {
+//       // guest cart
+//       const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+//       const existingItem = existingCart.find((p: any) => p.id === product.id);
+
+//       if (existingItem) {
+//         existingItem.quantity += 1;
+//       } else {
+//         existingCart.push({ ...product, quantity: 1 });
+//       }
+
+//       localStorage.setItem("cart", JSON.stringify(existingCart));
+
+//       alert("✅ Added to cart!");
+//     }
+//   } catch (error) {
+//     console.error("❌ Failed to add to cart:", error);
+//   }
+// };
 
 
   // const handleAddToCart = async (product: any) => {
@@ -84,8 +99,8 @@ const handleAddToCart = async (product: any) => {
     <section className="py-16 bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Filter + Sort */}
-        <div className="flex flex-col lg:flex-row justify-between items-center mb-12 gap-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-12 gap-6 product-nav">
+          {/* <div className="flex flex-wrap gap-2">
             {["All", "Hookahs", "Flavors", "Accessories", "Apparel"].map((cat) => (
               <button
                 key={cat}
@@ -98,9 +113,9 @@ const handleAddToCart = async (product: any) => {
                 {cat}
               </button>
             ))}
-          </div>
+          </div> */}
 
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <span className="text-gray-400">Sort by:</span>
             <select className="bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-amber-400 pr-8">
               <option value="featured">Featured</option>
@@ -108,7 +123,7 @@ const handleAddToCart = async (product: any) => {
               <option value="price-high">Price: High to Low</option>
               <option value="rating">Highest Rated</option>
             </select>
-          </div>
+          </div> */}
         </div>
 
         {/* Products Grid */}
@@ -119,11 +134,14 @@ const handleAddToCart = async (product: any) => {
               className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-amber-400/50 transition-all duration-300 group"
             >
               <div className="relative overflow-hidden">
-                <img
-                  src={product.imageUrl || "/placeholder.png"}
-                  alt={product.name}
-                  className="w-full h-64 object-cover object-top group-hover:scale-110 transition-transform duration-500"
-                />
+                <Link href={`/products/${product.id}`} className="block">
+  <img
+    src={product.imageUrl || "/placeholder.png"}
+    alt={product.name}
+    className="w-full h-64 object-cover object-top group-hover:scale-110 transition-transform duration-500 cursor-pointer relative z-20"
+  />
+</Link>
+
 
                 <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button className="w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-amber-400 hover:text-black transition-colors cursor-pointer">

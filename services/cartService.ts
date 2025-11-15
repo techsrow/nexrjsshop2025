@@ -1,4 +1,4 @@
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/Cart`;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/cart`;
 
 export const cartService = {
   async getCart() {

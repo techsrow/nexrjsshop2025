@@ -72,7 +72,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           quantity: ci.quantity,
         })) || [];
       setCartItems(items);
-      setCartCount(items.reduce((s, it) => s + it.quantity, 0));
+      // setCartCount(items.reduce((s, it) => s + it.quantity, 0));
+      setCartCount(
+  items.reduce((s: number, it: { quantity: number }) => s + it.quantity, 0)
+);
+
     } catch (err) {
       // fallback to guest if server fails
       syncStateFromGuest();
@@ -98,7 +102,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       // Logged-in → Send to API cart
       await cartService.addToCart(productId, quantity);
       await loadCartItems();
-      await loadCartCount();
+      await refreshCartCount();
+
     } else {
       // Guest → Save FULL DETAILS to localStorage
       const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
@@ -176,16 +181,58 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     await syncStateFromServer();
   };
 
-  const clearCart = async () => {
-    if (!token) {
-      writeGuest([]);
-      syncStateFromGuest();
-      return;
-    }
+// const clearCart = async () => {
+//   const storedToken = localStorage.getItem("token");  //✅ REAL TOKEN SOURCE
 
-    await cartService.clearCart();
-    await syncStateFromServer();
-  };
+//   if (!storedToken) {
+//     writeGuest([]);
+//     syncStateFromGuest();
+//     return;
+//   }
+
+//   try {
+//     await cartService.clearCart();
+//     setCartItems([]);
+//     setCartCount(0); // ✅ UI updates instantly
+//   } catch (error) {
+//     console.error("Clear cart error:", error);
+//   }
+// };
+
+
+  // const clearCart = async () => {
+  //   if (!token) {
+  //     writeGuest([]);
+  //     syncStateFromGuest();
+  //     return;
+  //   }
+
+  //   await cartService.clearCart();
+  //   await syncStateFromServer();
+  // };
+
+
+  const clearCart = async () => {
+  const storedToken = localStorage.getItem("token"); // ✅ always correct
+
+  if (!storedToken) {
+    writeGuest([]);
+    setCartItems([]);
+    setCartCount(0);
+    return;
+  }
+
+  try {
+    await cartService.clearCart(storedToken); // pass token directly
+
+    // instantly wipe UI
+    setCartItems([]);
+    setCartCount(0);
+  } catch (error) {
+    console.error("Clear cart failed:", error);
+  }
+};
+
 
   // ------- merge guest cart on login -------
   useEffect(() => {
@@ -236,6 +283,30 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const refreshCartCount = async () => {
+  try {
+    if (token) {
+      const res = await cartService.getCart();
+      const items =
+        res.data?.items?.map((ci: any) => ({
+          productId: ci.productId,
+          name: ci.productName,
+          price: ci.productPrice,
+          imageUrl: ci.productImageUrl,
+          quantity: ci.quantity,
+        })) || [];
+
+      setCartCount(items.reduce((s: number, it: any) => s + it.quantity, 0));
+    } else {
+      const guest = readGuest();
+      setCartCount(guest.reduce((s: number, it: any) => s + it.quantity, 0));
+    }
+  } catch (err) {
+    console.error("Failed to refresh cart count:", err);
+  }
+};
+
+
   return (
     <CartContext.Provider
       value={{
@@ -247,6 +318,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeItem,
         clearCart,
         loadCartItems,
+        refreshCartCount,
       }}
     >
       {children}

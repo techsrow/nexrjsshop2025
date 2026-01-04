@@ -18,7 +18,11 @@ export default function BuyNowCheckoutPage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [postal, setPostal] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState("");
+
   const [country, setCountry] = useState("India");
+  
 
   // Load Order
   useEffect(() => {
@@ -55,8 +59,16 @@ export default function BuyNowCheckoutPage() {
           city,
           postal,
           country,
+          deliveryDate,
+  deliveryTimeSlot,
         }),
       });
+
+      console.log("BUY NOW PAYLOAD:", {
+  deliveryDate,
+  deliveryTimeSlot
+});
+
 
       const result = await res.json();
 
@@ -146,6 +158,33 @@ export default function BuyNowCheckoutPage() {
               onChange={(e) => setCountry(e.target.value)}
             />
           </div>
+
+          <h2 className="text-xl font-semibold mt-4">Delivery Schedule</h2>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+  <input
+    type="date"
+    className="p-3 rounded bg-gray-700 border border-gray-600"
+    required
+    min={new Date().toISOString().split("T")[0]}
+    value={deliveryDate}
+    onChange={(e) => setDeliveryDate(e.target.value)}
+  />
+
+  <select
+    className="p-3 rounded bg-gray-700 border border-gray-600"
+    required
+    value={deliveryTimeSlot}
+    onChange={(e) => setDeliveryTimeSlot(e.target.value)}
+  >
+    <option value="">Select Time Slot</option>
+    <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM</option>
+    <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM</option>
+    <option value="01:00 PM - 03:00 PM">01:00 PM - 03:00 PM</option>
+    <option value="03:00 PM - 06:00 PM">03:00 PM - 06:00 PM</option>
+  </select>
+</div>
+
 
           <button className="w-full bg-amber-400 text-black py-3 rounded-lg font-semibold hover:bg-amber-500">
             Confirm Order

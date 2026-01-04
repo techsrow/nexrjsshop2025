@@ -72,3 +72,13 @@ a {
 .cart-pad{
   margin-top: 80px;
 }
+
+video::-webkit-media-controls {
+  display: none !important;
+}
+.ticker{
+  background-color: #b3008f !important;
+}
+.theme{
+  background-color: #b3008f !important;
+}

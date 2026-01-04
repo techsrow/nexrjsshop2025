@@ -3,14 +3,14 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white">
+    <footer className="ticker text-white ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand + About */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 flex items-center justify-center">
-                <i className="ri-fire-line text-2xl text-amber-400"></i>
+                <i className="ri-fire-line text-2xl text-white-500"></i>
               </div>
               <span
                 className="text-2xl font-bold"
@@ -50,7 +50,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400">
+            <h3 className="text-lg font-semibold mb-4 text-white-500">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -81,7 +81,7 @@ const Footer = () => {
               <li>
                 <a
                   href="/contact"
-                  className="text-gray-400 hover:text-amber-400 transition-colors"
+                  className="text-white-500 hover:text-amber-400 transition-colors"
                 >
                   Contact
                 </a>
@@ -91,7 +91,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-amber-400">
+            <h3 className="text-lg font-semibold mb-4 text-white-500">
               Contact
             </h3>
             <div className="space-y-2 text-gray-400">

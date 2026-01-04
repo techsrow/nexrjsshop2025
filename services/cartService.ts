@@ -98,22 +98,73 @@ export const cartService = {
     return data; // ✅ returns { success, data: { totalItems } }
   },
 
-  async clearCart() {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`${API_URL}/clear`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    });
+  // async clearCart() {
+  //   const token = localStorage.getItem("token");
+  //   const res = await fetch(`${API_URL}/clear`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       Authorization: token ? `Bearer ${token}` : "",
+  //     },
+  //   });
 
-    const data = await res.json().catch(() => null);
+  //   const data = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      console.error("❌ Clear Cart Backend:", data);
-      throw new Error(data?.message || "Failed to clear cart");
-    }
+  //   if (!res.ok) {
+  //     console.error("❌ Clear Cart Backend:", data);
+  //     throw new Error(data?.message || "Failed to clear cart");
+  //   }
 
-    return data;
+  //   return data;
+  // }
+
+//   async clearCart(storedToken?: string) {
+//   const token = localStorage.getItem("token");
+
+//   if (!token) {
+//     throw new Error("Missing token");
+//   }
+
+//   const res = await fetch(`${API_URL}/clear`, {
+//     method: "DELETE",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${token}`, //✅ ALWAYS
+//     },
+//   });
+
+//   const data = await res.json().catch(() => null);
+
+//   if (!res.ok) {
+//     console.error("❌ Clear Cart Backend:", data);
+//     throw new Error(data?.message || "Failed to clear cart");
+//   }
+
+//   return data;
+// }
+async clearCart(token?: string) {
+  const finalToken = token || localStorage.getItem("token");
+
+  if (!finalToken) {
+    throw new Error("Missing token");
   }
+
+  const res = await fetch(`${API_URL}/clear`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${finalToken}`,
+    },
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    console.error("❌ Clear Cart Backend:", data);
+    throw new Error(data?.message || "Failed to clear cart");
+  }
+
+  return data;
+}
+
+
 };

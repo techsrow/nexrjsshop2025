@@ -1,6 +1,6 @@
 import React from "react";
 
-import FeaturedProducts from "./FeaturedProducts";
+import FeaturedProducts from "./FeaturedProductsSlider";
 
 export default function Hero() {
   return (

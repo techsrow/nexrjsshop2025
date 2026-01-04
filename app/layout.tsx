@@ -2,10 +2,13 @@
 
 import Footer from "@/components/Footer";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+
 import { CartProvider } from "@/context/CartContext";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
+import AgeGate from "@/components/AgeGate";
+import HeaderDesktop from "@/components/HeaderDesktop";
+import HeaderMobile from "@/components/HeaderMobile";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 
@@ -19,15 +22,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="bg-black text-white">
+      <body className="text-dark">
+        
         <AuthProvider>
           <CartProvider>
-            <Navbar /> {/* ✅ Moved inside AuthProvider */}
+          
+{/* Desktop */}
+        <div className="hidden lg:block">
+          <HeaderDesktop />
+        </div>
+
+        {/* Mobile */}
+        <div className="lg:hidden">
+          <HeaderMobile />
+        </div>
+        
+        
             {children}
             <Toaster />
             <Footer />
           </CartProvider>
         </AuthProvider>
+        
       </body>
     </html>
   );

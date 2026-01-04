@@ -25,6 +25,8 @@ export default function CheckoutPage() {
   const total = subtotal + shipping + tax;
 
   const onSubmit = async (formData: any) => {
+
+    console.log("✅ FORM DATA RECEIVED:", formData); // <-- VERY IMPORTANT
     if (cartItems.length === 0) {
       toast.error("❌ Cart is empty");
       return;
@@ -41,7 +43,10 @@ export default function CheckoutPage() {
       shippingCity: formData.city,
       shippingCountry: formData.country,
       shippingPostalCode: formData.zip,
+      deliveryDate: formData.deliveryDate,
+  deliveryTimeSlot: formData.deliveryTimeSlot,
     };
+    console.log("📦 FINAL PAYLOAD TO SERVER:", basePayload);
 
     try {
       let response;
@@ -66,11 +71,14 @@ export default function CheckoutPage() {
 
       if (response?.success) {
         toast.success("✅ Order placed successfully!");
+          
         // Save order number for success page, if present
         if (response.data?.orderNumber) {
           localStorage.setItem("lastOrderNumber", response.data.orderNumber);
         }
-        clearCart();
+      await clearCart();
+    
+
         router.push("/order-success");
       } else {
         toast.error(response?.message || "Checkout failed");
@@ -163,6 +171,34 @@ export default function CheckoutPage() {
                   className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white"
                 />
               </div>
+
+
+              <h2 className="text-xl font-bold text-white">Delivery Schedule</h2>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  {/* DELIVERY DATE */}
+  <input
+    type="date"
+    {...register("deliveryDate")}
+    required
+    min={new Date().toISOString().split("T")[0]} // disable past dates
+    className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white"
+  />
+
+  {/* TIME SLOT */}
+  <select
+    {...register("deliveryTimeSlot")}
+    required
+    className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white"
+  >
+    <option value="">Select Time Slot</option>
+    <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM</option>
+    <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM</option>
+    <option value="01:00 PM - 03:00 PM">01:00 PM - 03:00 PM</option>
+    <option value="03:00 PM - 06:00 PM">03:00 PM - 06:00 PM</option>
+  </select>
+</div>
+
 
               <button
                 type="submit"

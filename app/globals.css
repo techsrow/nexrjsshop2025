@@ -22,9 +22,7 @@
   transform: translateY(-3px);
   box-shadow: 0 10px 32px rgba(255, 191, 0, 0.4);
 }
-h1 {
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-}
+
 
 .hero p {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);

@@ -7,114 +7,91 @@ import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
+const getCheapestVariant = (variants: any[]) => {
+  return [...variants]
+    .filter(v => v.stockQuantity > 0)
+    .sort((a, b) => {
+      const pa = Number(a.discountPrice ?? a.price);
+      const pb = Number(b.discountPrice ?? b.price);
+      return pa - pb;
+    })[0];
+};
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const { addToCart } = useCart();
 
   useEffect(() => {
     (async () => {
-      try {
-        const res = await productService.getAll();
-        setProducts(res.data || res);
-      } catch (error) {
-        console.error("Failed to load products:", error);
-      }
+      const data = await productService.getAll();
+      setProducts(data);
     })();
   }, []);
 
   const handleAddToCart = async (product: any) => {
-    try {
-      await addToCart(product.id, 1, {
-        name: product.name,
-        price: Number(product.price),
-        imageUrl: product.imageUrl,
-      });
-      toast.success("Added to cart!");
-    } catch (error) {
-      console.error("Add to cart failed:", error);
+    if (!product.variants?.length) {
+      toast.error("Product unavailable");
+      return;
     }
+
+    const variant = getCheapestVariant(product.variants);
+
+    if (!variant) {
+      toast.error("Out of stock");
+      return;
+    }
+
+    await addToCart(variant.id, 1, {
+      productId: product.id,
+      name: product.name,
+      imageUrl: product.imageUrl,
+      price: Number(variant.discountPrice ?? variant.price),
+      variant: {
+        size: variant.size,
+        color: variant.color,
+        weight: variant.weight,
+      },
+    });
+
+    toast.success("Added to cart");
   };
 
   return (
-    <section className="py-14 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="py-14">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {products.map(product => {
+          const minPrice = Math.min(
+            ...product.variants.map((v: any) =>
+              Number(v.discountPrice ?? v.price)
+            )
+          );
 
-        {/* PRODUCT GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product: any) => (
-            <div
-              key={product.id}
-              className="border rounded-xl overflow-hidden bg-white hover:shadow-lg transition"
-            >
-              {/* IMAGE + BADGE */}
-              <div className="relative p-4">
-                {product.badge && (
-                  <span
-                    className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-md text-white
-                      ${product.badge === "BEST SELLER" ? "bg-pink-500" : "bg-green-500"}
-                    `}
-                  >
-                    {product.badge}
-                  </span>
-                )}
+          return (
+            <div key={product.id} className="border rounded-xl p-4">
+              <Link href={`/products/${product.id}`}>
+                <img
+                  src={product.imageUrl || "/placeholder.png"}
+                  className="h-52 w-full object-contain"
+                />
+              </Link>
 
-                <Link href={`/products/${product.id}`}>
-                  <img
-                    src={product.imageUrl || "/placeholder.png"}
-                    alt={product.name}
-                    className="w-full h-52 object-contain"
-                  />
-                </Link>
-              </div>
+              <h3 className="mt-3 font-semibold">{product.name}</h3>
 
-              {/* CONTENT */}
-              <div className="px-4 pb-5 text-center">
-                <Link href={`/products/${product.id}`}>
-                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 min-h-[40px]">
-                    {product.name}
-                  </h3>
-                </Link>
+              <p className="text-sm text-gray-500">
+                {product.variants.length} variants
+              </p>
 
-                {/* BENEFITS */}
-                {product.benefits && (
-                  <p className="text-sm text-green-600 mt-2 line-clamp-2">
-                    {product.benefits}
-                  </p>
-                )}
+              <p className="text-lg font-bold mt-2">₹{minPrice}</p>
 
-                {/* SIZE */}
-                {product.size && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {product.size}
-                  </p>
-                )}
-
-                {/* RATING */}
-                <div className="flex justify-center items-center gap-2 mt-2 text-sm">
-                  <span className="text-yellow-500">★</span>
-                  <span>{product.rating || "4.7"}</span>
-                  <span className="text-blue-500">
-                    ✔ {product.reviews || "75"} Reviews
-                  </span>
-                </div>
-
-                {/* PRICE */}
-                <div className="mt-3 text-lg font-bold text-gray-900">
-                  ₹{product.price}
-                </div>
-
-                {/* ADD TO CART */}
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="mt-4 w-full bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-lg font-semibold transition"
-                >
-                  ADD TO CART
-                </button>
-              </div>
+              <button
+                onClick={() => handleAddToCart(product)}
+                className="mt-4 w-full bg-sky-600 text-white py-2 rounded"
+              >
+                ADD TO CART
+              </button>
             </div>
-          ))}
-        </div>
-
+          );
+        })}
       </div>
     </section>
   );

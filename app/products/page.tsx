@@ -57,41 +57,62 @@ export default function ProductsPage() {
   };
 
   return (
-    <section className="py-14">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map(product => {
-          const minPrice = Math.min(
-            ...product.variants.map((v: any) =>
-              Number(v.discountPrice ?? v.price)
-            )
-          );
+    <section className="bg-gray-100 py-10">
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+          Products
+        </h1>
 
-          return (
-            <div key={product.id} className="border rounded-xl p-4">
-              <Link href={`/products/${product.id}`}>
-                <img
-                  src={product.imageUrl || "/placeholder.png"}
-                  className="h-52 w-full object-contain"
-                />
-              </Link>
+        {/* PRODUCT GRID */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {products.map(product => {
+            const minPrice = Math.min(
+              ...product.variants.map((v: any) =>
+                Number(v.discountPrice ?? v.price)
+              )
+            );
 
-              <h3 className="mt-3 font-semibold">{product.name}</h3>
-
-              <p className="text-sm text-gray-500">
-                {product.variants.length} variants
-              </p>
-
-              <p className="text-lg font-bold mt-2">₹{minPrice}</p>
-
-              <button
-                onClick={() => handleAddToCart(product)}
-                className="mt-4 w-full bg-sky-600 text-white py-2 rounded"
+            return (
+              <div
+                key={product.id}
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden group"
               >
-                ADD TO CART
-              </button>
-            </div>
-          );
-        })}
+                {/* IMAGE */}
+                <Link href={`/products/${product.id}`}>
+                  <div className="relative bg-gray-50 h-36 md:h-44 flex items-center justify-center">
+                    <img
+                      src={product.imageUrl || "/placeholder.png"}
+                      alt={product.name}
+                      className="h-32 md:h-36 object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                </Link>
+
+                {/* CONTENT */}
+                <div className="p-4">
+                  <h3 className="text-sm md:text-base font-medium text-gray-900 line-clamp-2">
+                    {product.name}
+                  </h3>
+
+                  <p className="text-xs text-gray-500 mt-1">
+                    {product.variants.length} variants available
+                  </p>
+
+                  <p className="text-lg font-bold text-gray-900 mt-2">
+                    ₹{minPrice}
+                  </p>
+
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="mt-4 w-full bg-[#b3008f] hover:bg-[#990077] text-white py-2.5 rounded-lg text-sm font-semibold transition"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

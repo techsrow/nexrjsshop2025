@@ -18,7 +18,8 @@ type CartItem = {
   variantId: number;
   productId: number;
   name: string;
-  price: number;
+  price: number; // ✅ SELLING PRICE
+  mrp?: number | null;
   quantity: number;
   imageUrl?: string;
   variant?: {
@@ -31,11 +32,16 @@ type CartItem = {
 type CartContextType = {
   cartItems: CartItem[];
   cartCount: number;
-  addToCart: (variantId: number, quantity?: number, meta?: Partial<CartItem>) => Promise<void>;
+  addToCart: (
+    variantId: number,
+    quantity?: number,
+    meta?: Partial<CartItem>
+  ) => Promise<void>;
   updateQuantity: (variantId: number, quantity: number) => Promise<void>;
   removeItem: (variantId: number) => Promise<void>;
   clearCart: () => Promise<void>;
   loadCartItems: () => Promise<void>;
+  refreshCartCount: () => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -70,9 +76,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (!token) {
       const guest = readGuest();
       setCartItems(guest);
-      setCartCount(
-        guest.reduce((sum, i) => sum + (i.quantity || 0), 0)
-      );
+      setCartCount(guest.reduce((s, i) => s + i.quantity, 0));
       return;
     }
 
@@ -85,7 +89,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         productId: ci.productId,
         name: ci.productName,
         imageUrl: ci.productImageUrl,
-        price: Number(ci.variant.discountPrice ?? ci.variant.price),
+        price: Number(ci.variant.discountPrice ?? ci.variant.price), // ✅ FIXED
+        mrp: ci.variant.discountPrice ? ci.variant.price : null,
         quantity: Number(ci.quantity),
         variant: {
           size: ci.variant.size,
@@ -95,7 +100,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       })) || [];
 
     setCartItems(items);
-    setCartCount(items.reduce((sum, i) => sum + i.quantity, 0));
+    setCartCount(items.reduce((s, i) => s + i.quantity, 0));
+  };
+
+  /* ---------- Refresh count ONLY ---------- */
+
+  const refreshCartCount = async () => {
+    try {
+      if (token) {
+        const res = await cartService.getCart();
+        const items = res.data?.items || [];
+        setCartCount(items.reduce((s: number, i: any) => s + i.quantity, 0));
+        return;
+      }
+
+      const guest = readGuest();
+      setCartCount(guest.reduce((s, i) => s + i.quantity, 0));
+    } catch (err) {
+      console.error("Failed to refresh cart count:", err);
+    }
   };
 
   /* ---------- Add to cart ---------- */
@@ -105,7 +128,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     quantity = 1,
     meta?: Partial<CartItem>
   ) => {
-    // 🔹 GUEST
     if (!token) {
       const guest = readGuest();
       const found = guest.find((i) => i.variantId === variantId);
@@ -118,6 +140,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           productId: meta?.productId || 0,
           name: meta?.name || "",
           price: meta?.price || 0,
+          mrp: meta?.mrp ?? null,
           imageUrl: meta?.imageUrl,
           quantity,
           variant: meta?.variant,
@@ -125,46 +148,83 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
 
       writeGuest(guest);
-      await loadCartItems();
+      await refreshCartCount();
       return;
     }
 
-    // 🔹 LOGGED IN
     await cartService.addToCart(variantId, quantity);
-    await loadCartItems();
+    await refreshCartCount();
   };
 
   /* ---------- Update quantity ---------- */
 
+  // const updateQuantity = async (variantId: number, quantity: number) => {
+  //   if (!token) {
+  //     const guest = readGuest().map((i) =>
+  //       i.variantId === variantId ? { ...i, quantity } : i
+  //     );
+  //     writeGuest(guest);
+  //     await refreshCartCount();
+  //     return;
+  //   }
+
+  //   await cartService.updateQuantity(variantId, quantity);
+  //   await refreshCartCount();
+  // };
+
   const updateQuantity = async (variantId: number, quantity: number) => {
-    if (!token) {
-      const guest = readGuest().map((i) =>
-        i.variantId === variantId ? { ...i, quantity } : i
-      );
-      writeGuest(guest);
-      await loadCartItems();
-      return;
-    }
+  setCartItems(prev =>
+    prev.map(item =>
+      item.variantId === variantId
+        ? { ...item, quantity }
+        : item
+    )
+  );
 
-    await cartService.updateQuantity(variantId, quantity);
-    await loadCartItems();
-  };
+  setCartCount(prev =>
+    prev + (quantity > 0 ? 0 : -1)
+  );
 
-  /* ---------- Remove item ---------- */
+  if (!token) {
+    const guest = readGuest().map(i =>
+      i.variantId === variantId ? { ...i, quantity } : i
+    );
+    writeGuest(guest);
+    return;
+  }
+
+  await cartService.updateQuantity(variantId, quantity);
+};
+
+
+  /* ---------- Remove ---------- */
+
+  // const removeItem = async (variantId: number) => {
+  //   if (!token) {
+  //     const guest = readGuest().filter((i) => i.variantId !== variantId);
+  //     writeGuest(guest);
+  //     await refreshCartCount();
+  //     return;
+  //   }
+
+  //   await cartService.removeItem(variantId);
+  //   await refreshCartCount();
+  // };
+
 
   const removeItem = async (variantId: number) => {
-    if (!token) {
-      const guest = readGuest().filter((i) => i.variantId !== variantId);
-      writeGuest(guest);
-      await loadCartItems();
-      return;
-    }
+  setCartItems(prev => prev.filter(i => i.variantId !== variantId));
+  setCartCount(prev => Math.max(0, prev - 1));
 
-    await cartService.removeItem(variantId);
-    await loadCartItems();
-  };
+  if (!token) {
+    const guest = readGuest().filter(i => i.variantId !== variantId);
+    writeGuest(guest);
+    return;
+  }
 
-  /* ---------- Clear cart ---------- */
+  await cartService.removeItem(variantId);
+};
+  /* ---------- Clear ---------- */
 
   const clearCart = async () => {
     if (!token) {
@@ -195,6 +255,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeItem,
         clearCart,
         loadCartItems,
+        refreshCartCount,
       }}
     >
       {children}

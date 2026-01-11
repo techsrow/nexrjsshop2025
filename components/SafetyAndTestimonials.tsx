@@ -9,20 +9,38 @@ import "swiper/css/pagination";
 
 const standards = [
   {
-    title: "Dermatologically Tested",
-    desc: "We ensure each product is tested clinically on sensitive human skin to ensure that it is not allergenic.",
-    icon: "/icons/dermatology.png",
+    title: "Make in India",
+    desc: "Proudly made in India, delivering quality healthcare products crafted with care, innovation, and reliability.",
+    icon: "https://res.cloudinary.com/techsrow/image/upload/v1768117813/crescent%20health%20Care/End%20icons/Untitled%20design/make-in-india_pdrxeo.png",
   },
   {
-    title: "FDA Approved",
-    desc: "MamaEarth is FDA approved, which means we are 100% safe to be used for babies as well as mamas.",
-    icon: "/icons/fda.png",
+    title: "High Quality",
+    desc: "High quality products crafted with precision, reliability, safety standards, and trusted performance for everyday wellness.",
+    icon: "https://res.cloudinary.com/techsrow/image/upload/v1768117813/crescent%20health%20Care/End%20icons/Untitled%20design/5_efnfer.png",
   },
+  {
+    title: "ABS Material",
+    desc: "High quality ABS material ensures durability, strength, lightweight performance, and long-lasting reliable use every day.",
+    icon: "https://res.cloudinary.com/techsrow/image/upload/v1768117812/crescent%20health%20Care/End%20icons/Untitled%20design/1_esv4wr.png",
+  },
+    {
+    title: "ISI Certified",
+    desc: "ISI certified products guarantee safety, quality standards, and compliance with trusted Indian manufacturing regulations.",
+    icon: "https://res.cloudinary.com/techsrow/image/upload/v1768117813/crescent%20health%20Care/End%20icons/Untitled%20design/2_qg7bpe.png",
+  },
+
   {
     title: "Made Safe Certified",
     desc: "The MADE SAFE seal means a product is literally made with safe ingredients.",
-    icon: "/icons/made-safe.png",
+    icon: "https://res.cloudinary.com/techsrow/image/upload/v1768117812/crescent%20health%20Care/End%20icons/Untitled%20design/3_vcmlst.png",
   },
+
+   {
+    title: "Certified Protection",
+    desc: "Certified protection ensures products meet safety benchmarks and provide dependable usage confidence..",
+    icon: "https://res.cloudinary.com/techsrow/image/upload/v1768117812/crescent%20health%20Care/End%20icons/Untitled%20design/4_wig79z.png",
+  },
+  
   
   
 ];
@@ -33,35 +51,35 @@ const testimonials = [
     name: "Waris Raza",
     text: "I live near the coastal region, and sun tan is a big issue here. Mamaearth Ubtan Face Wash worked very well and my skin glow improved.",
     rating: 5,
-    image: "/users/u1.jpg",
+    image: "https://res.cloudinary.com/techsrow/image/upload/v1768028646/crescent%20health%20Care/856a7452-6ce9-440c-bcf7-7e273c62fc24._CR0_0_387_387_SX48__cbhvwy.jpg",
   },
   {
     id: 2,
     name: "Manisha",
     text: "I have always used natural products for my baby. Mamaearth products are toxin-free and effective. Shopping experience was smooth and fast.",
     rating: 5,
-    image: "/users/u2.jpg",
+    image: "https://res.cloudinary.com/techsrow/image/upload/v1768028646/crescent%20health%20Care/a92c6ccd-390d-4d80-b409-0165013b050f._CR62_0_375_375_SX48__ygh6iz.jpg",
   },
   {
      id: 3,
     name: "Tanmay",
     text: "I was facing excessive hair fall. Onion Shampoo and Hair Serum helped a lot. I also use Ubtan Face Wash.",
     rating: 5,
-    image: "/users/u3.jpg",
+    image: "https://res.cloudinary.com/techsrow/image/upload/v1768028646/crescent%20health%20Care/dc4d5995-3467-4dd6-81af-61c039d47cd5._CR0_0_500_500_SX48__bruw3i.jpg",
   },
   {
      id: 4,
     name: "Tanmay",
     text: "I was facing excessive hair fall. Onion Shampoo and Hair Serum helped a lot. I also use Ubtan Face Wash.",
     rating: 5,
-    image: "/users/u3.jpg",
+    image: "https://res.cloudinary.com/techsrow/image/upload/v1768028646/crescent%20health%20Care/330ec3c4-6844-4a39-b3ee-99148d7e536f._CR0_0.0_333_333_SX48__x6cvmo.jpg",
   },
   {
      id: 5,
     name: "Tanmay",
     text: "I was facing excessive hair fall. Onion Shampoo and Hair Serum helped a lot. I also use Ubtan Face Wash.",
     rating: 5,
-    image: "/users/u3.jpg",
+    image: "https://res.cloudinary.com/techsrow/image/upload/v1768028955/crescent%20health%20Care/04cfe734-a118-4a66-8959-ef138e063448._CR0_0_500_500_SX48__u0ct3p.jpg",
   },
 ];
 
@@ -86,11 +104,11 @@ export default function SafetyAndTestimonials() {
           Super Safe Standards
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 ">
           {standards.map((item) => (
             <div
               key={item.title}
-              className="flex gap-4 bg-white/10 backdrop-blur-md rounded-xl p-6"
+              className="flex gap-4 bg-[#691d5a] backdrop-blur-md rounded-xl p-6"
             >
               <img
                 src={item.icon}

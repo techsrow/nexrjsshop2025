@@ -11,7 +11,7 @@ export default function ServicePaymentSection() {
           {/* Free Shipping */}
           <div className="flex items-center gap-4 p-6 border-r">
             <img
-              src="/icons/shipping.png"
+              src="https://res.cloudinary.com/techsrow/image/upload/v1768128314/crescent%20health%20Care/ICONS/fast_j2sk8b.png"
               alt="Free Shipping"
               className="w-10 h-10"
             />
@@ -26,7 +26,7 @@ export default function ServicePaymentSection() {
           {/* COD */}
           <div className="flex items-center gap-4 p-6 border-r">
             <img
-              src="/icons/cod.png"
+              src="https://res.cloudinary.com/techsrow/image/upload/v1768128313/crescent%20health%20Care/ICONS/cod_ba6dbu.png"
               alt="COD Available"
               className="w-10 h-10"
             />
@@ -58,24 +58,16 @@ export default function ServicePaymentSection() {
           </p>
 
           {/* PAYMENT ICONS */}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2">
             {[
               "upi",
-              "phonepe",
-              "gpay",
-              "paytm",
-              "mobikwik",
-              "visa",
-              "mastercard",
-              "amex",
-              "rupay",
-              "netbanking",
+          
             ].map((icon) => (
               <img
                 key={icon}
-                src={`/payments/${icon}.png`}
+                src="https://res.cloudinary.com/techsrow/image/upload/v1768127810/crescent%20health%20Care/End%20icons/Untitled%20design/web-payments_l7mmxs.png"
                 alt={icon}
-                className="h-8 object-contain"
+                className=" object-contain"
               />
             ))}
           </div>

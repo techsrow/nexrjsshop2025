@@ -100,7 +100,7 @@ export default function BuyNowCheckoutPage() {
             toast.error("Payment verification failed");
           }
         },
-        theme: { color: "#fbbf24" },
+        theme: { color: "#b3008f" },
       };
 
       new window.Razorpay(options).open();
@@ -150,65 +150,163 @@ export default function BuyNowCheckoutPage() {
   if (!order) return <p className="text-center text-red-500">Order not found</p>;
 
   return (
-    <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+  <>
+    <Script src="https://checkout.razorpay.com/v1/checkout.js" />
 
-      <section className="py-12 bg-gray-900 text-white">
-        <div className="max-w-3xl mx-auto px-6">
+    <section className="bg-gray-100 min-h-screen py-6 md:py-12">
+      <div className="max-w-4xl mx-auto px-4">
+        <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-6">
+          Buy Now Checkout
+        </h1>
 
-          <h1 className="text-xl font-bold mb-6">Buy Now Checkout</h1>
+        {/* ORDER SUMMARY */}
+        <div className="bg-white rounded-xl shadow-sm p-5 md:p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Order #{order.orderNumber}
+          </h2>
 
-          {/* ORDER DETAILS */}
-          <div className="bg-gray-800 p-6 rounded-xl mb-6">
-            <h2 className="text-lg font-semibold mb-3">
-              Order #{order.orderNumber}
-            </h2>
-
+          <div className="space-y-3">
             {order.items.map((item: any) => (
-              <div key={item.variantId} className="border-b border-gray-700 mb-2 pb-2">
-                <p>{item.productName}</p>
-                <p className="text-gray-400 text-sm">
-                  {[item.variant?.size, item.variant?.color, item.variant?.weight]
-                    .filter(Boolean)
-                    .join(" / ")}
-                </p>
-                <p>
-                  {item.quantity} × ₹{Number(item.unitPrice).toFixed(2)}
+              <div
+                key={item.variantId}
+                className="flex justify-between gap-3 border-b pb-3 last:border-b-0"
+              >
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {item.productName}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {[item.variant?.size, item.variant?.color, item.variant?.weight]
+                      .filter(Boolean)
+                      .join(" / ")}
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Qty {item.quantity}
+                  </p>
+                </div>
+
+                <p className="text-sm font-semibold text-gray-900">
+                  ₹{Number(item.unitPrice * item.quantity).toFixed(2)}
                 </p>
               </div>
             ))}
-
-            <p className="mt-4 text-lg font-semibold">
-              Total: <span className="text-amber-400">₹{order.totalAmount}</span>
-            </p>
           </div>
 
-          {/* CUSTOMER FORM */}
-          <form onSubmit={confirmOrder} className="bg-gray-800 p-6 rounded-xl space-y-4">
+          <div className="border-t mt-4 pt-4 flex justify-between font-bold text-base">
+            <span>Total</span>
+            <span className="text-[#b3008f]">
+              ₹{order.totalAmount}
+            </span>
+          </div>
+        </div>
 
-            <input className="input" placeholder="Full Name" required value={name}
-              onChange={(e) => setName(e.target.value)} />
+        {/* CUSTOMER FORM */}
+        <form
+          onSubmit={confirmOrder}
+          className="bg-white rounded-xl shadow-sm p-5 md:p-6 space-y-5"
+        >
+          <h2 className="text-lg font-semibold text-gray-900">
+            Delivery Details
+          </h2>
 
-            <input className="input" placeholder="Phone" required value={phone}
-              onChange={(e) => setPhone(e.target.value)} />
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-gray-600">
+              Full Name
+            </label>
+            <input
+              className="input"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
 
-            <textarea className="input" placeholder="Address" required value={address}
-              onChange={(e) => setAddress(e.target.value)} />
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-gray-600">
+              Phone Number
+            </label>
+            <input
+              className="input"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <input className="input" placeholder="City" required value={city}
-                onChange={(e) => setCity(e.target.value)} />
-              <input className="input" placeholder="Postal Code" required value={postal}
-                onChange={(e) => setPostal(e.target.value)} />
-              <input className="input" placeholder="Country" required value={country}
-                onChange={(e) => setCountry(e.target.value)} />
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-gray-600">
+              Address
+            </label>
+            <textarea
+              className="input resize-none"
+              required
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-600">
+                City
+              </label>
+              <input
+                className="input"
+                required
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <input type="date" className="input" required value={deliveryDate}
-                onChange={(e) => setDeliveryDate(e.target.value)} />
-              <select className="input" required value={deliveryTimeSlot}
-                onChange={(e) => setDeliveryTimeSlot(e.target.value)}>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-600">
+                Postal Code
+              </label>
+              <input
+                className="input"
+                required
+                value={postal}
+                onChange={(e) => setPostal(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-600">
+                Country
+              </label>
+              <input
+                className="input"
+                required
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-600">
+                Delivery Date
+              </label>
+              <input
+                type="date"
+                className="input"
+                required
+                value={deliveryDate}
+                onChange={(e) => setDeliveryDate(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-600">
+                Delivery Time Slot
+              </label>
+              <select
+                className="input"
+                required
+                value={deliveryTimeSlot}
+                onChange={(e) => setDeliveryTimeSlot(e.target.value)}
+              >
                 <option value="">Select Time Slot</option>
                 <option>09:00 AM - 11:00 AM</option>
                 <option>11:00 AM - 01:00 PM</option>
@@ -216,13 +314,28 @@ export default function BuyNowCheckoutPage() {
                 <option>03:00 PM - 06:00 PM</option>
               </select>
             </div>
+          </div>
 
-            <button className="w-full bg-amber-400 text-black py-3 rounded-lg font-semibold">
-              Pay Now
-            </button>
-          </form>
+          <button
+            type="submit"
+            className="w-full bg-[#b3008f] hover:bg-[#990077] text-white py-3 rounded-lg font-semibold transition"
+          >
+            Pay Now
+          </button>
+        </form>
+
+        {/* MOBILE STICKY PAY */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <button
+            onClick={confirmOrder}
+            className="w-full bg-[#b3008f] hover:bg-[#990077] text-white py-3 rounded-lg font-semibold"
+          >
+            Pay ₹{order.totalAmount}
+          </button>
         </div>
-      </section>
-    </>
-  );
+      </div>
+    </section>
+  </>
+);
+
 }

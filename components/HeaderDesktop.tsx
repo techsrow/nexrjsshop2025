@@ -42,7 +42,12 @@ export default function HeaderDesktop() {
         <span>Asia&apos;s 1st Brand with MADE SAFE Certified Products</span>
         <span>
           Valid Only Today: Flat 50% Off on Selected Products |{" "}
-          <span className="font-semibold cursor-pointer">Shop Now</span>
+          <Link
+            href="/products"
+            className="px-5 py-2  text-white font-semibold hover:text-grey transition"
+          >
+            Shop Now
+          </Link>
         </span>
       </div>
  )}
@@ -50,41 +55,48 @@ export default function HeaderDesktop() {
       <div className="flex items-center justify-between px-6 py-4 border-b">
         {/* Logo */}
         <div className="text-3xl font-bold text-sky-500">
-          <img src="/crescent.jpeg" width={120} />
+          <Link href="/">
+            <img src="/crescent.jpeg" width={120} />
+          </Link>
+        
         </div>
 
         {/* Search */}
         <div className="flex w-[600px]">
-          <div className="relative flex-1">
-            <FiSearch className="absolute left-3 top-3 text-gray-400" />
-            {showSearch && (
-            <div className="absolute top-full left-0 w-full bg-white shadow-md border mt-1 z-50">
-              {[
-                "Vitamin C Face Serum",
-                "Vitamin C Sunscreen",
-                "Ubtan Face Wash",
-                "Rice Face Wash",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          )}
-           <input
-            onFocus={() => setShowSearch(true)}
-            onBlur={() => setTimeout(() => setShowSearch(false), 200)}
-            placeholder="Search for Vitamin C"
-            className="w-full border rounded-md py-2 pl-10 pr-4"
-          />
+  <div className="relative flex-1">
+    <FiSearch className="absolute left-3 top-3 text-gray-400" />
+
+    {showSearch && (
+      <div className="absolute top-full left-0 w-full bg-white shadow-md border mt-1 z-50 rounded-md overflow-hidden">
+        {[
+          "Vitamin C Face Serum",
+          "Vitamin C Sunscreen",
+          "Ubtan Face Wash",
+          "Rice Face Wash",
+        ].map((item) => (
+          <div
+            key={item}
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+          >
+            {item}
           </div>
-          <button className="bg-sky-500 text-white px-6 rounded-r-md hover:bg-sky-600">
-            Search
-          </button>
-        </div>
+        ))}
+      </div>
+    )}
+
+    <input
+      onFocus={() => setShowSearch(true)}
+      onBlur={() => setTimeout(() => setShowSearch(false), 200)}
+      placeholder="Search for Vitamin C"
+      className="w-full border rounded-l-md py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#b3008f]/40"
+    />
+  </div>
+
+  <button className="bg-[#b3008f] text-white px-6 rounded-r-md hover:bg-[#990077] transition">
+    Search
+  </button>
+</div>
+
 
         {/* Cart + Login */}
         <div className="flex items-center gap-6 text-gray-700">

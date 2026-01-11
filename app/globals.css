@@ -49,6 +49,9 @@ a {
   color: #93620d;
 }
 
+
+
+
 /* Hide Scrollbar but keep scroll working */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -79,4 +82,21 @@ video::-webkit-media-controls {
 }
 .theme{
   background-color: #b3008f !important;
+}
+
+
+
+.logo-footer{
+  max-width: 300px;
+  margin-left: -85px;
+}
+
+.input {
+  @apply w-full border border-gray-300 rounded-lg
+  px-4 py-3 text-sm md:text-base
+  text-gray-900 bg-white
+  placeholder-gray-400
+  focus:outline-none focus:border-[#b3008f]
+  focus:ring-2 focus:ring-[#b3008f]/30
+  transition;
 }

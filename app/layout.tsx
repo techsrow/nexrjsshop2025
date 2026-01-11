@@ -9,11 +9,9 @@ import { AuthProvider } from "@/context/AuthContext";
 import AgeGate from "@/components/AgeGate";
 import HeaderDesktop from "@/components/HeaderDesktop";
 import HeaderMobile from "@/components/HeaderMobile";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-
-
-  
   return (
     <html lang="en">
       <head>
@@ -22,28 +20,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="text-dark">
-        
+
+      {/* 👇 pb-16 REQUIRED for bottom nav */}
+      <body className="text-dark pb-16">
         <AuthProvider>
           <CartProvider>
-          
-{/* Desktop */}
-        <div className="hidden lg:block">
-          <HeaderDesktop />
-        </div>
 
-        {/* Mobile */}
-        <div className="lg:hidden">
-          <HeaderMobile />
-        </div>
-        
-        
-            {children}
+            {/* Desktop Header */}
+            <div className="hidden lg:block">
+              <HeaderDesktop />
+            </div>
+
+            {/* Mobile Header */}
+            <div className="lg:hidden">
+              <HeaderMobile />
+            </div>
+
+            {/* PAGE CONTENT */}
+            <main>{children}</main>
+
             <Toaster />
             <Footer />
+
+            {/* MOBILE BOTTOM NAV */}
+            <MobileBottomNav />
+
           </CartProvider>
         </AuthProvider>
-        
       </body>
     </html>
   );

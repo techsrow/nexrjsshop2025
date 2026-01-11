@@ -106,23 +106,50 @@ export default function CheckoutPage() {
       return;
     }
 
-    const items = cartItems.map((item: any) => ({
-      variantId: item.variantId,
-      quantity: item.quantity,
-    }));
+    // const items = cartItems.map((item: any) => ({
+    //   variantId: item.variantId,
+    //   quantity: item.quantity,
+    //   pr
+    // }));
 
+    const items = cartItems.map(item => ({
+  productId: item.productId,
+  variantId: item.variantId,
+  quantity: item.quantity,
+}));
+
+    // const payload = {
+    //   items,
+    //   customerName: `${formData.firstName} ${formData.lastName}`,
+    //   customerEmail: formData.email,
+    //   guestPhone: formData.phone,
+    //   shippingAddress: formData.address,
+    //   shippingCity: formData.city,
+    //   shippingCountry: formData.country,
+    //   shippingPostalCode: formData.zip,
+    //   deliveryDate: formData.deliveryDate,
+    //   deliveryTimeSlot: formData.deliveryTimeSlot,
+    // };
     const payload = {
-      items,
-      customerName: `${formData.firstName} ${formData.lastName}`,
-      customerEmail: formData.email,
-      guestPhone: formData.phone,
-      shippingAddress: formData.address,
-      shippingCity: formData.city,
-      shippingCountry: formData.country,
-      shippingPostalCode: formData.zip,
-      deliveryDate: formData.deliveryDate,
-      deliveryTimeSlot: formData.deliveryTimeSlot,
-    };
+  items: cartItems.map((item) => ({
+    variantId: item.variantId,
+    quantity: item.quantity,
+    productId: item.productId
+  })),
+
+  customerName: `${formData.firstName} ${formData.lastName}`,
+  customerEmail: formData.email,
+  guestPhone: formData.phone,
+
+  shippingAddress: formData.address,
+  shippingCity: formData.city,
+  shippingCountry: formData.country,
+  shippingPostalCode: formData.zip,
+
+  deliveryDate: formData.deliveryDate,
+  deliveryTimeSlot: formData.deliveryTimeSlot,
+};
+
 
     try {
       const response = isLoggedIn
@@ -141,35 +168,43 @@ export default function CheckoutPage() {
   };
 
   return (
-    <>
-      {/* Razorpay Script */}
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+  <>
+    <Script src="https://checkout.razorpay.com/v1/checkout.js" />
 
-      <section className="py-16 bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* FORM */}
-          <div className="lg:col-span-2">
+    <section className="bg-gray-100 min-h-screen py-6 md:py-12">
+      <div className="max-w-6xl mx-auto px-4">
+        <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-6">
+          Checkout
+        </h1>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* LEFT : FORM */}
+          <div className="lg:col-span-2 space-y-6">
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4 bg-gray-800 p-6 rounded-xl"
+              className="bg-white rounded-xl p-5 md:p-6 shadow-sm space-y-4"
             >
+              <h2 className="text-lg font-semibold text-gray-900">
+                Delivery Details
+              </h2>
+
               <input {...register("email")} placeholder="Email" required className="input" />
               <input {...register("phone")} placeholder="Phone" required className="input" />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input {...register("firstName")} placeholder="First Name" required className="input" />
                 <input {...register("lastName")} placeholder="Last Name" required className="input" />
               </div>
 
               <input {...register("address")} placeholder="Address" required className="input" />
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <input {...register("city")} placeholder="City" required className="input" />
                 <input {...register("country")} placeholder="Country" required className="input" />
                 <input {...register("zip")} placeholder="Postal Code" required className="input" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="date" {...register("deliveryDate")} required className="input" />
                 <select {...register("deliveryTimeSlot")} required className="input">
                   <option value="">Select Time Slot</option>
@@ -180,41 +215,75 @@ export default function CheckoutPage() {
                 </select>
               </div>
 
-              <button className="bg-amber-400 w-full py-3 rounded-lg font-semibold">
+              <button
+                type="submit"
+                className="w-full bg-[#b3008f] hover:bg-[#990077] text-white py-3 rounded-lg font-semibold transition"
+              >
                 Pay Now
               </button>
             </form>
           </div>
 
-          {/* SUMMARY */}
-          <div className="bg-gray-800 p-6 rounded-xl">
-            <h2 className="text-white text-xl mb-4">Order Summary</h2>
+          {/* RIGHT : SUMMARY */}
+          <div className="bg-white rounded-xl p-5 md:p-6 shadow-sm h-fit lg:sticky lg:top-24">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Order Summary
+            </h2>
 
-            {cartItems.map((item: any) => (
-              <div key={item.variantId} className="flex gap-3 mb-3">
-                <img src={item.imageUrl} className="w-16 h-16 rounded" />
-                <div>
-                  <p className="text-white">{item.name}</p>
-                  <p className="text-gray-400 text-sm">
-                    Qty {item.quantity}
-                  </p>
-                  <p className="text-amber-400">
+            <div className="space-y-3">
+              {cartItems.map((item: any) => (
+                <div key={item.variantId} className="flex gap-3">
+                  <img
+                    src={item.imageUrl}
+                    className="w-14 h-14 rounded-md object-cover border"
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900 line-clamp-2">
+                      {item.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Qty {item.quantity}
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900">
                     ₹{(item.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
 
-            <div className="border-t pt-3 text-white">
-              <p className="flex justify-between">Subtotal ₹{subtotal}</p>
-              <p className="flex justify-between">Shipping ₹{shipping}</p>
-              <p className="flex justify-between text-xl text-amber-400">
-                Total ₹{total}
-              </p>
+            <div className="border-t mt-4 pt-4 text-sm text-gray-700 space-y-2">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>₹{subtotal}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping</span>
+                <span>{shipping === 0 ? "FREE" : `₹${shipping}`}</span>
+              </div>
+              <div className="flex justify-between font-bold text-base">
+                <span>Total</span>
+                <span className="text-[#b3008f]">
+                  ₹{total}
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </section>
-    </>
-  );
+
+        {/* MOBILE STICKY PAY */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <button
+            onClick={handleSubmit(onSubmit)}
+            className="w-full bg-[#b3008f] hover:bg-[#990077] text-white py-3 rounded-lg font-semibold"
+          >
+            Pay ₹{total}
+          </button>
+        </div>
+      </div>
+    </section>
+  </>
+);
+
 }
+

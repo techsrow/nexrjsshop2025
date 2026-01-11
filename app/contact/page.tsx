@@ -1,103 +1,108 @@
 "use client";
 
-import { useState } from "react";
+import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({
-    name: "",
-    whatsapp: "",
-    email: "",
-    location: "",
-    message: "",
-  });
-
-  const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-) => {
-  setForm({ ...form, [e.target.name]: e.target.value });
-};
-
-
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-
-    const phoneNumber = "917738258525"; // ✅ replace with your WhatsApp number
-    const text = `New Inquiry From Website:
-    Name: ${form.name}
-    WhatsApp: ${form.whatsapp}
-    Email: ${form.email}
-    Location: ${form.location}
-    Message: ${form.message}`;
-
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-
-    window.open(url, "_blank");
-  };
-
   return (
-    <section className="min-h-screen bg-gray-900 py-16 py-40">
-      <div className="max-w-3xl mx-auto bg-gray-800 p-10 rounded-2xl shadow-xl">
-        <h2 className="text-3xl font-bold text-amber-400 text-center mb-8">
-          Contact Us
-        </h2>
+    <div className="bg-gray-50 min-h-screen py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+            Contact Us
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            We’re here to help. Reach out to Crescent Healthcare for product support,
+            inquiries, or assistance anytime.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-amber-400 outline-none"
-            required
-          />
+        {/* Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* Contact Info */}
+          <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              Get in Touch
+            </h2>
 
-          <input
-            type="text"
-            name="whatsapp"
-            placeholder="WhatsApp Number"
-            value={form.whatsapp}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-amber-400 outline-none"
-            required
-          />
+            <div className="space-y-5 text-gray-700">
+              <div className="flex items-start gap-4">
+                <FiMail className="text-[#b3008f] text-xl mt-1" />
+                <div>
+                  <p className="font-medium">Email</p>
+                  <p className="text-sm">support@crescenthealthcare.in</p>
+                </div>
+              </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-amber-400 outline-none"
-          />
+              <div className="flex items-start gap-4">
+                <FiPhone className="text-[#b3008f] text-xl mt-1" />
+                <div>
+                  <p className="font-medium">Phone</p>
+                  <p className="text-sm">022-25007768</p>
+                  <p className="text-xs text-gray-500">Mon – Sat, 10 AM – 6 PM</p>
+                </div>
+              </div>
 
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            value={form.location}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-amber-400 outline-none"
-          />
+              <div className="flex items-start gap-4">
+                <FiMapPin className="text-[#b3008f] text-xl mt-1" />
+                <div>
+                  <p className="font-medium">Address</p>
+                  <p className="text-sm">
+                    D-201, Ghatkopar Industrial Estate, Off L.B.S Marg,<br /> Ghatkopar(West), Mumbai 400086 
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <textarea
-            name="message"
-            rows={4}
-            placeholder="Your Message"
-            value={form.message}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-amber-400 outline-none"
-            required
-          />
+          {/* Contact Form */}
+          <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              Send Us a Message
+            </h2>
 
-          <button
-            type="submit"
-            className="w-full bg-amber-400 text-black font-bold py-3 rounded-lg hover:bg-amber-500 transition"
-          >
-            Send on WhatsApp
-          </button>
-        </form>
+            <form className="space-y-4">
+              <input
+                type="text"
+                placeholder="Full Name"
+                className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#b3008f]/40"
+              />
+
+              <input
+                type="email"
+                placeholder="Email Address"
+                className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#b3008f]/40"
+              />
+
+              <input
+                type="text"
+                placeholder="Subject"
+                className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#b3008f]/40"
+              />
+
+              <textarea
+                rows={4}
+                placeholder="Your Message"
+                className="w-full border rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#b3008f]/40"
+              />
+
+              <button
+                type="submit"
+                className="w-full bg-[#b3008f] hover:bg-[#990077] text-white py-2 rounded-md font-semibold transition"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Footer Note */}
+        <p className="text-center text-xs text-gray-500 mt-10">
+          We aim to respond to all queries within 24–48 business hours.
+        </p>
       </div>
-    </section>
+    </div>
   );
 }

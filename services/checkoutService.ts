@@ -1,3 +1,5 @@
+
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import api from "./api"; // <-- Correct default import
 
@@ -33,10 +35,20 @@ export const checkoutService = {
     return res.data;
   },
 
+  // createOrder: async (payload: CheckoutData) => {
+  //   const res = await api.post("/orders", payload);
+  //   return res.data;
+  // },
+
   // 👤 GUEST CHECKOUT (NO TOKEN SENT)
   createGuestOrder: async (checkoutData: CheckoutData) => {
     const res = await api.post("/Checkout/guest", checkoutData, false); 
     return res.data;
   },
+
+  // createGuestOrder: async (payload: CheckoutData) => {
+  //   const res = await api.post("/guest-orders", payload);
+  //   return res.data;
+  // },
 
 };

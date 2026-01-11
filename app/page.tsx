@@ -25,7 +25,7 @@ export default function HomePage() {
     <main>
        <HomeSlider />
         <BestSellerSlider />
-         <BestOfWOWSection />
+         {/* <BestOfWOWSection /> */}
          <SkinCare/>
          <HairCare />
          <HealthCareDevice />
@@ -34,8 +34,8 @@ export default function HomePage() {
         
         <FeaturedProductsSlider />
        <SafetyAndTestimonials />
-        <FAQ />
-        <Blog />
+        {/* <FAQ />
+        <Blog /> */}
         <ServicePaymentSection/>
       </main>
   );

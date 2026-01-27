@@ -1,34 +1,41 @@
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/publicproducts`;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { fetchJson, normalizeArray, normalizeMeta, qs } from "@/lib/publicApi";
+
+const PRODUCTS_PATH = "/Publicproducts";
+
 
 export const productService = {
-  async getAll() {
-    try {
-      const res = await fetch(API_URL, { cache: "no-store" });
+  // ✅ universal list (search + category + subcategory + paging)
+  async list(params: any = {}) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 12;
 
-      if (!res.ok) {
-        console.error("❌ Failed to fetch products:", res.status);
-        return [];
-      }
+    const query = qs({
+      q: params.q,
+      page,
+      limit,
+      sort: params.sort,
+      minPrice: params.minPrice,
+      maxPrice: params.maxPrice,
+      categorySlug: params.categorySlug,
+      subcategorySlug: params.subcategorySlug,
+    });
 
-      const result = await res.json();
-      return result.data || [];
-    } catch (err) {
-      console.error("🚨 Error fetching products:", err);
-      return [];
-    }
+    const json = await fetchJson(`${PRODUCTS_PATH}${query}`);
+    const items = normalizeArray(json);
+    const meta = normalizeMeta(json, { page, limit });
+
+    return { items, meta };
   },
 
-  async getById(id: string) {
-    try {
-      const res = await fetch(`${API_URL}/${id}`, { cache: "no-store" });
+  // ✅ backward compatible for your old code
+  async getAll() {
+    const { items } = await this.list({ page: 1, limit: 200 });
+    return items;
+  },
 
-      if (!res.ok) return null;
-
-      const result = await res.json();
-      return result.data || null;
-    } catch (err) {
-      console.error("🚨 Error fetching product:", err);
-      return null;
-    }
+  // ✅ detail (adjust if backend differs)
+  async getById(idOrSlug: string) {
+    return fetchJson(`${PRODUCTS_PATH}/${encodeURIComponent(idOrSlug)}`);
   },
 };

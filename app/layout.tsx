@@ -1,15 +1,16 @@
-"use client";
-
-import Footer from "@/components/Footer";
 import "./globals.css";
 
-import { CartProvider } from "@/context/CartContext";
-import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "@/context/AuthContext";
-import AgeGate from "@/components/AgeGate";
-import HeaderDesktop from "@/components/HeaderDesktop";
-import HeaderMobile from "@/components/HeaderMobile";
+import Footer from "@/components/Footer";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import Header from "@/components/header/Header";
+
+import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
+import { CatalogMenuProvider } from "@/components/header/CatalogMenuProvider";
+
+import ToasterClient from "@/components/ToasterClient"; // ✅ client wrapper
+import FloatingContactButtons from "@/components/common/FloatingContactButtons";
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,30 +22,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
 
-      {/* 👇 pb-16 REQUIRED for bottom nav */}
       <body className="text-dark pb-16">
         <AuthProvider>
           <CartProvider>
+            {/* ✅ NO endpoints prop */}
+            <CatalogMenuProvider>
+              {/* HEADER */}
+              <Header />
 
-            {/* Desktop Header */}
-            <div className="hidden lg:block">
-              <HeaderDesktop />
-            </div>
+              {/* PAGE CONTENT */}
+              <main>{children}</main>
 
-            {/* Mobile Header */}
-            <div className="lg:hidden">
-              <HeaderMobile />
-            </div>
+              {/* CLIENT-ONLY */}
+              <ToasterClient />
+<FloatingContactButtons />
 
-            {/* PAGE CONTENT */}
-            <main>{children}</main>
-
-            <Toaster />
-            <Footer />
-
-            {/* MOBILE BOTTOM NAV */}
-            <MobileBottomNav />
-
+              <Footer />
+              <MobileBottomNav />
+            </CatalogMenuProvider>
           </CartProvider>
         </AuthProvider>
       </body>

@@ -19,20 +19,28 @@ import DermaRoller from "@/components/DermaRoller";
 import SafetyAndTestimonials from "@/components/SafetyAndTestimonials";
 import ServicePaymentSection from "@/components/ServicePaymentSection";
 import FeaturedProductsSlider from "@/components/FeaturedProductsSlider";
+import CategoryStrip from "@/components/home/CategoryStrip";
+import ShopByConcern from "@/components/home/ShopByConcern";
+import TwoBannerGrid from "@/components/home/TwoBannerGrid";
+import BestSellingSection from "@/components/home/BestSellingSection";
+import BestSellingSectionByTags from "@/components/home/BestSellingSectionByTags";
+
+
+
 
 export default function HomePage() {
   return (
     <main>
        <HomeSlider />
-        <BestSellerSlider />
+         <CategoryStrip />
+          <ShopByConcern />
+          <TwoBannerGrid />
+                <BestSellingSection />
+                <TwoBannerGrid />
+                <BestSellingSectionByTags />
+
          {/* <BestOfWOWSection /> */}
-         <SkinCare/>
-         <HairCare />
-         <HealthCareDevice />
-         <Hijama />
-         <DermaRoller/>
-        
-        <FeaturedProductsSlider />
+         
        <SafetyAndTestimonials />
         {/* <FAQ />
         <Blog /> */}

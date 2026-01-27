@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// components/products/ProductListClient.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import FiltersSidebar from "@/components/products/FiltersSidebar";
 import ProductsGrid from "@/components/products/ProductsGrid";
@@ -9,9 +10,9 @@ import Pagination from "@/components/products/Pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6001/api";
 
-type ProductListResponse = {
+type ProductsResponse = {
   success: boolean;
-  data: any[]; // ✅ array
+  data: any[];
   pagination?: {
     page: number;
     limit: number;
@@ -20,18 +21,11 @@ type ProductListResponse = {
   };
 };
 
-export default function ProductsPage() {
-
-
-
-
+export default function ProductListClient() {
   const router = useRouter();
   const sp = useSearchParams();
-    const [showFilter, setShowFilter] = useState(false);
-const [showSort, setShowSort] = useState(false);
 
   const [loading, setLoading] = useState(true);
-  
   const [items, setItems] = useState<any[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -40,6 +34,7 @@ const [showSort, setShowSort] = useState(false);
     totalPages: 1,
   });
 
+  // URL state
   const category = sp.get("category") || "";
   const subCategory = sp.get("subCategory") || "";
   const q = sp.get("q") || "";
@@ -76,22 +71,18 @@ const [showSort, setShowSort] = useState(false);
   useEffect(() => {
     let alive = true;
 
-    
-
     async function load() {
       try {
         setLoading(true);
-
         const url = new URL(`${API_BASE}/publicproducts`);
         Object.entries(queryObj).forEach(([k, v]) => url.searchParams.set(k, v));
 
         const res = await fetch(url.toString(), { cache: "no-store" });
-        const json: ProductListResponse = await res.json();
+        const json: ProductsResponse = await res.json();
 
         if (!alive) return;
 
         if (json?.success) {
-          // ✅ FIX: your API returns array directly
           setItems(Array.isArray(json.data) ? json.data : []);
           setPagination(
             json.pagination || { page: 1, limit: 15, totalItems: 0, totalPages: 1 }
@@ -101,7 +92,7 @@ const [showSort, setShowSort] = useState(false);
           setPagination({ page: 1, limit: 15, totalItems: 0, totalPages: 1 });
         }
       } catch (e) {
-        console.error("Products load error:", e);
+        console.error(e);
         if (!alive) return;
         setItems([]);
         setPagination({ page: 1, limit: 15, totalItems: 0, totalPages: 1 });
@@ -123,10 +114,9 @@ const [showSort, setShowSort] = useState(false);
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
           <div className="text-sm text-gray-600">
             Showing{" "}
-            <span className="font-semibold text-gray-900">
-              {loading ? "…" : items.length}
-            </span>{" "}
-            Products
+            <span className="font-semibold text-gray-900">{items.length}</span>{" "}
+            Products (Total:{" "}
+            <span className="font-semibold text-gray-900">{pagination.totalItems}</span>)
           </div>
 
           <div className="flex items-center justify-between md:justify-end gap-3">
@@ -144,44 +134,32 @@ const [showSort, setShowSort] = useState(false);
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
-          {/* Sidebar */}
-         {/* Desktop sidebar only */}
-<div className="hidden lg:block sticky top-24">
-  <FiltersSidebar
-    apiBase={API_BASE}
-    activeCategory={category}
-    activeSubCategory={subCategory}
-    q={q}
-    minPrice={minPrice}
-    maxPrice={maxPrice}
-    onApply={(next) => pushQuery({ ...next, page: 1 })}
-    onClear={() => router.push("/products")}
-  />
-</div>
-
+          {/* Sidebar (matches current FiltersSidebar props) */}
+          <FiltersSidebar
+            apiBase={API_BASE}
+            activeCategory={category}
+            activeSubCategory={subCategory}
+            q={q}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            onApply={(next) => pushQuery({ ...next, page: 1 })}
+            onClear={() => router.push("/products")} theme={""}          />
 
           {/* Products */}
           <div>
-            {/* Mobile Filter + Sort buttons (top of grid) */}
+            {loading ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-[340px] rounded-2xl bg-white border border-gray-100 animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : (
+             <ProductsGrid items={items as any} />
 
-<div className="lg:hidden mobile-filterbar  left-0 right-0 z-40 bg-[#f5f6f8] py-3">
-  <div className="grid grid-cols-2 gap-3">
-    <button
-      onClick={() => setShowFilter(true)}
-      className="flex items-center justify-center gap-2 rounded-xl border bg-white py-3 text-sm font-semibold"
-    >
-      Filter
-    </button>
-
-    <button
-      onClick={() => setShowSort(true)}
-      className="flex items-center justify-center gap-2 rounded-xl border bg-white py-3 text-sm font-semibold"
-    >
-      Sort
-    </button>
-  </div>
-</div>
-            <ProductsGrid items={items as any} />
+            )}
 
             <div className="mt-6">
               <Pagination
@@ -193,71 +171,6 @@ const [showSort, setShowSort] = useState(false);
           </div>
         </div>
       </div>
-
-      {/* Mobile Filter Drawer */}
-{showFilter && (
-  <div className="fixed inset-0 z-50 lg:hidden">
-    <div className="absolute inset-0 bg-black/40" onClick={() => setShowFilter(false)} />
-
-    <div className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-white p-4 overflow-y-auto">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Filters</h3>
-        <button onClick={() => setShowFilter(false)} className="text-lg">✕</button>
-      </div>
-
-      <FiltersSidebar
-        apiBase={API_BASE}
-        activeCategory={category}
-        activeSubCategory={subCategory}
-        q={q}
-        minPrice={minPrice}
-        maxPrice={maxPrice}
-        onApply={(next) => {
-          pushQuery({ ...next, page: 1 });
-          setShowFilter(false);
-        }}
-        onClear={() => {
-          router.push("/products");
-          setShowFilter(false);
-        }}
-      />
-    </div>
-  </div>
-)}
-
-{/* Mobile Sort Sheet */}
-{showSort && (
-  <div className="fixed inset-0 z-50 lg:hidden">
-    <div className="absolute inset-0 bg-black/40" onClick={() => setShowSort(false)} />
-
-    <div className="absolute bottom-0 left-0 right-0 rounded-t-2xl bg-white p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Sort by</h3>
-        <button onClick={() => setShowSort(false)} className="text-lg">✕</button>
-      </div>
-
-      {[
-        { label: "Newest", value: "newest" },
-        { label: "Price: Low to High", value: "price_asc" },
-        { label: "Price: High to Low", value: "price_desc" },
-      ].map((opt) => (
-        <button
-          key={opt.value}
-          onClick={() => {
-            pushQuery({ sort: opt.value, page: 1 });
-            setShowSort(false);
-          }}
-          className={`w-full rounded-lg px-4 py-3 text-left text-sm font-medium ${
-            sort === opt.value ? "bg-[#b3008f] text-white" : "hover:bg-gray-100"
-          }`}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
-
     </div>
   );
 }

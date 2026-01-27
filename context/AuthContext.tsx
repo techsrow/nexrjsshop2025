@@ -1,7 +1,16 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  getStoredUsername,
+  getToken,
+  setStoredUsername,
+  setToken,
+  clearStoredUsername,
+  clearToken,
+} from "@/lib/storage";
 
 interface AuthContextType {
   username: string | null;
@@ -15,32 +24,30 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: any) => {
   const [username, setUsername] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setTok] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("username");
-    const storedToken = localStorage.getItem("token");
+    const storedUser = getStoredUsername();
+    const storedToken = getToken();
 
-    if (storedUser && storedToken) {
-      setUsername(storedUser);
-      setToken(storedToken);
-    }
+    setUsername(storedUser);
+    setTok(storedToken);
   }, []);
 
   const login = (email: string, authToken: string) => {
-    localStorage.setItem("username", email);
-    localStorage.setItem("token", authToken);
+    setStoredUsername(email);
+    setToken(authToken);
 
     setUsername(email);
-    setToken(authToken);
+    setTok(authToken);
   };
 
   const logout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
+    clearStoredUsername();
+    clearToken();
 
     setUsername(null);
-    setToken(null);
+    setTok(null);
   };
 
   return (

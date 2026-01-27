@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
-/* globals.css or hero.css */
+/* =========================
+   HERO / GLOBAL STYLES
+========================= */
+
+.brand-bg { background: #b3008f; }
+.brand-text { color: #b3008f; }
+.brand-border { border-color: #b3008f; }
+
 
 .hero-title {
   letter-spacing: 0.1em;
@@ -8,7 +15,7 @@
 }
 
 .hero-subtitle {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   line-height: 1.6;
   text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.6);
 }
@@ -23,7 +30,6 @@
   box-shadow: 0 10px 32px rgba(255, 191, 0, 0.4);
 }
 
-
 .hero p {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
@@ -32,71 +38,124 @@ a {
   transition: all 0.3s ease;
 }
 
-
-/* in globals.css */
+/* Overlay */
 .hero-overlay {
-  background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 1) 100%
+  );
 }
 
-.logo-width{
+/* =========================
+   UTILITIES
+========================= */
+
+.logo-width {
   max-width: 120px;
 }
 
-.bg-gold-400{
+.bg-gold-400 {
   background-color: #dc9314;
 }
-.gold-text-color{
+
+.gold-text-color {
   color: #93620d;
 }
-
-
-
 
 /* Hide Scrollbar but keep scroll working */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-
 .scrollbar-hide {
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.product-nav{
+.product-nav {
   margin-top: 90px;
 }
 
-.product-nav-details{
+.product-nav-details {
   margin-top: 40px;
 }
 
-.cart-pad{
+.cart-pad {
   margin-top: 80px;
 }
 
 video::-webkit-media-controls {
   display: none !important;
 }
-.ticker{
+
+.ticker {
   background-color: #b3008f !important;
 }
-.theme{
+
+.theme {
   background-color: #b3008f !important;
 }
 
-
-
-.logo-footer{
+.logo-footer {
   max-width: 300px;
   margin-left: -85px;
 }
 
+/* =========================
+   INPUT (NO @apply - Tailwind v4 safe)
+========================= */
+
 .input {
-  @apply w-full border border-gray-300 rounded-lg
-  px-4 py-3 text-sm md:text-base
-  text-gray-900 bg-white
-  placeholder-gray-400
-  focus:outline-none focus:border-[#b3008f]
-  focus:ring-2 focus:ring-[#b3008f]/30
-  transition;
+  width: 100%;
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.75rem 1rem; /* px-4 py-3 */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  color: #111827; /* gray-900 */
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: #9ca3af; /* gray-400 */
+}
+
+.input:focus {
+  outline: none;
+  border-color: #b3008f;
+  box-shadow: 0 0 0 2px rgba(179, 0, 143, 0.3); /* ring */
+}
+
+@media (min-width: 768px) {
+  .input {
+    font-size: 1rem; /* text-base */
+    line-height: 1.5rem;
+  }
+}
+
+
+
+/* Mobile filter/sort sticky bar */
+.mobile-filterbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 72px;              /* adjust if header height differs */
+  z-index: 9999;
+  background: #f5f6f8;
+  padding: 12px 12px;
+}
+
+/* Give content space so it doesn't hide behind the fixed bar */
+.mobile-filterbar-space {
+  padding-top: 68px;      /* roughly bar height */
+}
+
+@media (min-width: 1024px) {
+  .mobile-filterbar,
+  .mobile-filterbar-space {
+    position: static;
+    padding-top: 0;
+  }
 }

@@ -9,11 +9,11 @@ import "swiper/css/pagination";
 
 export default function HomeSlider() {
   const slides = [
-    "/slider/slide1.jpg",
-    "/slider/slide2.jpg",
-    "/slider/slider3.jpg",
+    "/slider/slide1.png",
+    "/slider/slide2.png",
+    "/slider/slider3.png",
     "/slider/slider4.png",
-    "/slider/slider5.jpg",
+    
   ];
 
   return (
